@@ -55,31 +55,35 @@ public class View implements Observer {
     }
 
     private void createPlayerInfoPanels() {
+        // This sets up the player info panels initially, but we will have to update
+        // the panels when information updates in the model, so we'll use an Observer/Observable for that
         int rowHeight = 30;
+        this.player1Panel.setBackground(Color.yellow);
         JLabel nameLabel = new JLabel("Name: Player1");
         nameLabel.setBounds(padding,padding,400-padding,rowHeight);
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         this.player1Panel.add(nameLabel);
 
         JLabel bankLabel = new JLabel("Bank: ");
+        bankLabel.setText("Bank: £"+this.model.getPlayerBalance("player1"));
         bankLabel.setBounds(padding,padding+(rowHeight+padding),400-padding,rowHeight);
         bankLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         this.player1Panel.add(bankLabel);
 
+        // Sort hotels owned into groups and seperate with <br>
         String hotelsOwned = new String("Hotels owned: ");
         String previousGroup = new String("_");
+        // Get hotels owned by player
         for (String hotelName: model.getHotelsOwnedByPlayer("player1")) {
             if (!hotelName.contains(previousGroup)) {
+                // Seperate groups with breakline
                 hotelsOwned += "<br>";
                 previousGroup = hotelName.substring(0,1);
             }
             hotelsOwned += hotelName;
         }
 
-
-
-
-        JLabel hotelsOwnedLabel = new JLabel("<html>"+hotelsOwned+"/html>");
+        JLabel hotelsOwnedLabel = new JLabel("<html>"+hotelsOwned+"</html>");
         hotelsOwnedLabel.setBounds(padding,padding+(rowHeight+padding)*2,400-padding,rowHeight*8);
         hotelsOwnedLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         player1Panel.add(hotelsOwnedLabel);
