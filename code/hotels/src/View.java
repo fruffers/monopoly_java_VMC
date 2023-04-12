@@ -92,6 +92,42 @@ public class View implements Observer {
         JLabel iconLabel = new JLabel(icon1);
         iconLabel.setBounds(300-padding,padding,rowHeight*2,rowHeight*2);
         player1Panel.add(iconLabel);
+
+        ////////////////////////////////////////////////////////////////// Player 2
+        this.player2Panel.setBackground(Color.cyan);
+        JLabel nameLabel2 = new JLabel("Name: Player2");
+        nameLabel2.setBounds(padding,padding,400-padding,rowHeight);
+        nameLabel2.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        this.player2Panel.add(nameLabel2);
+
+        JLabel bankLabel2 = new JLabel("Bank: ");
+        bankLabel2.setText("Bank: £"+this.model.getPlayerBalance("player2"));
+        bankLabel2.setBounds(padding,padding+(rowHeight+padding),400-padding,rowHeight);
+        bankLabel2.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        this.player2Panel.add(bankLabel2);
+
+        // Sort hotels owned into groups and seperate with <br>
+        String hotelsOwned2 = new String("Hotels owned: ");
+        String previousGroup2 = new String("_");
+        // Get hotels owned by player
+        for (String hotelName: model.getHotelsOwnedByPlayer("player2")) {
+            if (!hotelName.contains(previousGroup2)) {
+                // Seperate groups with breakline
+                hotelsOwned2 += "<br>";
+                previousGroup2 = hotelName.substring(0,1);
+            }
+            hotelsOwned2 += hotelName;
+        }
+
+        JLabel hotelsOwnedLabel2 = new JLabel("<html>"+hotelsOwned2+"</html>");
+        hotelsOwnedLabel2.setBounds(padding,padding+(rowHeight+padding)*2,400-padding,rowHeight*8);
+        hotelsOwnedLabel2.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        player2Panel.add(hotelsOwnedLabel2);
+
+        ImageIcon icon2 = createImageIcon("resources/car2.png","player2");
+        JLabel iconLabel2 = new JLabel(icon2);
+        iconLabel2.setBounds(300-padding,padding,rowHeight*2,rowHeight*2);
+        player2Panel.add(iconLabel2);
     }
 
     private void createSquares() {
