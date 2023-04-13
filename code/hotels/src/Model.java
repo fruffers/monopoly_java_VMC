@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.Math;
@@ -23,11 +25,30 @@ public class Model extends Observable {
 
     }
 
+    /** Returns an ImageIcon, or null if the path was invalid. */
+    public ImageIcon createImageIcon(String path, String description) {
+        File file = new File("./");
+        try {
+            System.out.println(file.getCanonicalPath()+"/"+path);
+            String pathToIcon = new String(file.getCanonicalPath()+"/"+path);
+            return new ImageIcon(pathToIcon, description);
+
+        } catch (IOException e) {
+            System.err.println("Couldn't find file: " + path);
+        }
+        return null;
+    }
+
+
     public void initialisePlayers() {
         this.players = new ArrayList<Player>();
-        Player player1 = new Player("player1");
+        ImageIcon icon1 = createImageIcon("resources/car4.png","player1");
+        Player player1 = new Player("player1",Color.yellow,icon1);
         player1.setPosition(this.board.getSquareFromIndex(0));
-        Player player2 = new Player("player2");
+
+
+        ImageIcon icon2 = createImageIcon("resources/car2.png","player2");
+        Player player2 = new Player("player2",Color.cyan,icon2);
         player2.setPosition(this.board.getSquareFromIndex(0));
         this.players.add(player1);
         this.players.add(player2);
@@ -92,6 +113,11 @@ public class Model extends Observable {
         return board.getHotelOwnerName(squareIndex);
     }
 
+    public ImageIcon getPlayerImageIcon(String playerName) {
+        Player player = this.getPlayerFromName(playerName);
+        return player.getImageIcon();
+    }
+
     public String getPlayerName(int playerIndex) {
         return players.get(playerIndex).getName();
     }
@@ -111,13 +137,18 @@ public class Model extends Observable {
         return names;
     }
 
-    public boolean addNewPlayer(String name) {
-        if (players.size() < MAXPLAYERS ) {
-            players.add(new Player(name));
-            return true;
-        }
-        return false;
+    public ImageIcon getSmallImageIcon(String playerName) {
+        return new ImageIcon(this.getPlayerImageIcon(playerName).getImage().getScaledInstance(32,32,Image.SCALE_DEFAULT));
+
     }
+
+//    public boolean addNewPlayer(String name) {
+//        if (players.size() < MAXPLAYERS ) {
+//            players.add(new Player(name));
+//            return true;
+//        }
+//        return false;
+//    }
 
     public int rollDice() {
         // Gives random number from 0-1 then uses dicesides
@@ -217,6 +248,11 @@ public class Model extends Observable {
             }
         }
         return hotels;
+    }
+
+    public Color getPlayerColor(String playerName) {
+        Player player = getPlayerFromName(playerName);
+        return player.getColor();
     }
 
     public int getDiceScore() {

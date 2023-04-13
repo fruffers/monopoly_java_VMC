@@ -52,13 +52,25 @@ public class View implements Observer {
         }
         ((JLabel)square.getComponent(1)).setText(model.getSquareName(squareIndex));
 
+        String owner = model.getHotelOwnerName(squareIndex);
+        if (owner != null) {
+            square.setBackground(model.getPlayerColor(owner));
+        }
+
+        for (String playername: this.model.getPlayerNamesOnSquare(squareIndex)) {
+            ImageIcon playerCounter = this.model.getSmallImageIcon(playername);
+            ((JLabel)square.getComponent(2)).add(new JLabel(playerCounter));
+
+        }
+
+
     }
 
     private void createPlayerInfoPanels() {
         // This sets up the player info panels initially, but we will have to update
         // the panels when information updates in the model, so we'll use an Observer/Observable for that
         int rowHeight = 30;
-        this.player1Panel.setBackground(Color.yellow);
+        this.player1Panel.setBackground(model.getPlayerColor("player1"));
         JLabel nameLabel = new JLabel("Name: Player1");
         nameLabel.setBounds(padding,padding,400-padding,rowHeight);
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
@@ -88,13 +100,13 @@ public class View implements Observer {
         hotelsOwnedLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         player1Panel.add(hotelsOwnedLabel);
 
-        ImageIcon icon1 = createImageIcon("resources/car4.png","player1");
+        ImageIcon icon1 = this.model.getPlayerImageIcon("player1");
         JLabel iconLabel = new JLabel(icon1);
         iconLabel.setBounds(300-padding,padding,rowHeight*2,rowHeight*2);
         player1Panel.add(iconLabel);
 
         ////////////////////////////////////////////////////////////////// Player 2
-        this.player2Panel.setBackground(Color.cyan);
+        this.player2Panel.setBackground(model.getPlayerColor("player2"));
         JLabel nameLabel2 = new JLabel("Name: Player2");
         nameLabel2.setBounds(padding,padding,400-padding,rowHeight);
         nameLabel2.setFont(new Font(Font.SERIF,Font.BOLD,20));
@@ -124,7 +136,7 @@ public class View implements Observer {
         hotelsOwnedLabel2.setFont(new Font(Font.SERIF,Font.BOLD,20));
         player2Panel.add(hotelsOwnedLabel2);
 
-        ImageIcon icon2 = createImageIcon("resources/car2.png","player2");
+        ImageIcon icon2 = this.model.getPlayerImageIcon("player2");
         JLabel iconLabel2 = new JLabel(icon2);
         iconLabel2.setBounds(300-padding,padding,rowHeight*2,rowHeight*2);
         player2Panel.add(iconLabel2);
@@ -142,13 +154,22 @@ public class View implements Observer {
         panelse.setBounds(padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,squareSize,squareSize);
         panelse.setBackground(Color.white);
         panelse.setBorder(new LineBorder(Color.black,1));
+        // Price label
         JLabel priceLabel = new JLabel("",SwingConstants.CENTER);
         priceLabel.setBounds(0,(squareSize*2)/3,squareSize,squareSize/3);
         panelse.add(priceLabel);
+        // Name label
         JLabel nameLabel = new JLabel("",SwingConstants.CENTER);
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,70));
         nameLabel.setBounds(0,0,squareSize,squareSize);
         panelse.add(nameLabel);
+        // Counter label
+        JLabel counterLabel = new JLabel("",SwingConstants.CENTER);
+        // Create a horizontal boxlayout to put 2 counters next to each other
+        counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+        counterLabel.setBounds(padding,0,squareSize,squareSize/3);
+        panelse.add(counterLabel);
+
 
         this.squares.add(panelse);
         // This is the bottom row
@@ -169,6 +190,13 @@ public class View implements Observer {
             nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
             nameLabel.setBounds(0,0,propertyWidth,propertyWidth/2);
             newpanel.add(nameLabel);
+            // Counter label
+            counterLabel = new JLabel("",SwingConstants.CENTER);
+            // Create a horizontal boxlayout to put 2 counters next to each other
+            counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+            counterLabel.setBounds(padding/2,propertyWidth/2,propertyWidth,propertyWidth/2);
+            newpanel.add(counterLabel);
+
         }
         JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
         panelsw.setBounds(padding,padding+squareSize+propertiesPerSide*propertyWidth,squareSize,squareSize);
@@ -182,6 +210,13 @@ public class View implements Observer {
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
         nameLabel.setBounds(0,0,squareSize,squareSize/2);
         panelsw.add(nameLabel);
+        // Counterlabel
+        counterLabel = new JLabel("",SwingConstants.CENTER);
+        // Create a horizontal boxlayout to put 2 counters next to each other
+        counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+        counterLabel.setBounds(padding,0,squareSize,squareSize/3);
+        panelsw.add(counterLabel);
+
         // This is the left row
         for (int j = propertiesPerSide-1; j >= 0; j--) {
             JPanel newpanel = new JPanel();
@@ -200,6 +235,12 @@ public class View implements Observer {
             nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
             nameLabel.setBounds(0,propertyWidth/3,squareSize-padding,propertyWidth/3);
             newpanel.add(nameLabel);
+            // Counter label
+            counterLabel = new JLabel("",SwingConstants.CENTER);
+            // Create a horizontal boxlayout to put 2 counters next to each other
+            counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+            counterLabel.setBounds(padding,padding/2,propertyWidth,propertyWidth/3);
+            newpanel.add(counterLabel);
         }
         JPanel panelnw = new JPanel();//new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+0,Color.WHITE);
         panelnw.setBounds(padding,padding,squareSize,squareSize);
@@ -213,6 +254,13 @@ public class View implements Observer {
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
         nameLabel.setBounds(0,0,squareSize,squareSize/2);
         panelnw.add(nameLabel);
+        // Counterlabel
+        counterLabel = new JLabel("",SwingConstants.CENTER);
+        // Create a horizontal boxlayout to put 2 counters next to each other
+        counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+        counterLabel.setBounds(padding,0,squareSize,squareSize/3);
+        panelnw.add(counterLabel);
+
         // This is the top row
         for (int j = 0; j < propertiesPerSide; j++) {
 //            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+j*propertyWidth,padding+0,Color.WHITE);
@@ -231,6 +279,13 @@ public class View implements Observer {
             nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
             nameLabel.setBounds(0,0,propertyWidth,propertyWidth/2);
             newpanel.add(nameLabel);
+            // Counter label
+            counterLabel = new JLabel("",SwingConstants.CENTER);
+            // Create a horizontal boxlayout to put 2 counters next to each other
+            counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+            counterLabel.setBounds(padding/2,propertyWidth/2,propertyWidth,propertyWidth/2);
+            newpanel.add(counterLabel);
+
         }
         //Square ne = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+0,Color.WHITE);
         JPanel panelne = new JPanel();
@@ -245,6 +300,13 @@ public class View implements Observer {
         nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
         nameLabel.setBounds(0,0,squareSize,squareSize/2);
         panelne.add(nameLabel);
+        // Counterlabel
+        counterLabel = new JLabel("",SwingConstants.CENTER);
+        // Create a horizontal boxlayout to put 2 counters next to each other
+        counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+        counterLabel.setBounds(padding,0,squareSize,squareSize/3);
+        panelne.add(counterLabel);
+
         // This is the right row
         for (int j = 0; j < propertiesPerSide; j++) {
 //            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{squareSize,propertyWidth},padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+j*propertyWidth,Color.WHITE);
@@ -257,12 +319,19 @@ public class View implements Observer {
             newpanel.setBackground(Color.white);
             this.squares.add(newpanel);
             priceLabel = new JLabel("",SwingConstants.RIGHT);
+            // X is 2 thirds
             priceLabel.setBounds(squareSize*2/3,propertyWidth/3,propertyWidth/2,propertyWidth/3);
             newpanel.add(priceLabel);
             nameLabel = new JLabel("",SwingConstants.LEFT);
             nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
             nameLabel.setBounds(padding,propertyWidth/3,squareSize,propertyWidth/3);
             newpanel.add(nameLabel);
+            // Counter label
+            counterLabel = new JLabel("",SwingConstants.CENTER);
+            // Create a horizontal boxlayout to put 2 counters next to each other
+            counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
+            counterLabel.setBounds(squareSize/2,padding/2,propertyWidth,propertyWidth/3);
+            newpanel.add(counterLabel);
         }
 
         for (int i = 0; i < this.squares.size(); i++) {

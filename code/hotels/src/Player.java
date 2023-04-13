@@ -1,19 +1,31 @@
 import javax.lang.model.type.NullType;
 import javax.swing.*;
+import java.awt.*;
 
 public class Player {
     private String name;
     private int bank;
     private JList<Hotel> hotelsOwned;
     private Square position;
+    private Color color;
+    ImageIcon imageIcon;
 
-    public Player(String name) {
+    public Player(String name, Color color,ImageIcon imageIcon) {
         this.name = name;
         this.position = null;
         this.hotelsOwned = new JList<Hotel>();
         this.bank = 2000;
+        this.color = color;
+        this.imageIcon = imageIcon;
     }
 
+    public ImageIcon getImageIcon() {
+        return this.imageIcon;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
     public String getName() {
         return name;
     }
