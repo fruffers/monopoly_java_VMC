@@ -24,6 +24,7 @@ public class View implements Observer {
     // TODO: Remove reference to board and players objects
     ArrayList<Player> players;
     int padding = 10;
+    ImageIcon starIcon;
     Model model;
     Controller controller;
     public View(Model model, Controller controller) throws InterruptedException, InvocationTargetException {
@@ -49,6 +50,12 @@ public class View implements Observer {
         int price = model.getHotelPrice(squareIndex);
         if (price > 0) {
             ((JLabel)square.getComponent(0)).setText("£"+Integer.toString(model.getHotelPrice(squareIndex)));
+            if (model.getHotelRating(squareIndex) == 0) {
+                square.getComponent(3).setVisible(false);
+            } else {
+                ((JLabel)square.getComponent(3)).setText(Integer.toString(model.getHotelRating(squareIndex)));
+                square.getComponent(3).setVisible(true);
+            }
         }
         ((JLabel)square.getComponent(1)).setText(model.getSquareName(squareIndex));
 
@@ -60,7 +67,6 @@ public class View implements Observer {
         for (String playername: this.model.getPlayerNamesOnSquare(squareIndex)) {
             ImageIcon playerCounter = this.model.getSmallImageIcon(playername);
             ((JLabel)square.getComponent(2)).add(new JLabel(playerCounter));
-
         }
 
 
@@ -196,6 +202,13 @@ public class View implements Observer {
             counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
             counterLabel.setBounds(padding/2,propertyWidth/2,propertyWidth,propertyWidth/2);
             newpanel.add(counterLabel);
+            // Star rating
+            JLabel starLabel = new JLabel("",this.starIcon,SwingConstants.CENTER);
+            starLabel.setFont(new Font(Font.SERIF,Font.BOLD,15));
+            starLabel.setText("0");
+            starLabel.setBounds(0,propertyWidth,propertyWidth,propertyWidth/2);
+            newpanel.add(starLabel);
+            starLabel.setVisible(false);
 
         }
         JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
@@ -241,6 +254,13 @@ public class View implements Observer {
             counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
             counterLabel.setBounds(padding,padding/2,propertyWidth,propertyWidth/3);
             newpanel.add(counterLabel);
+            // Star rating
+            JLabel starLabel = new JLabel("",this.starIcon,SwingConstants.CENTER);
+            starLabel.setFont(new Font(Font.SERIF,Font.BOLD,15));
+            starLabel.setText("0");
+            starLabel.setBounds(padding,propertyWidth*2/3,propertyWidth,propertyWidth/3);
+            newpanel.add(starLabel);
+            starLabel.setVisible(false);
         }
         JPanel panelnw = new JPanel();//new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+0,Color.WHITE);
         panelnw.setBounds(padding,padding,squareSize,squareSize);
@@ -285,6 +305,13 @@ public class View implements Observer {
             counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
             counterLabel.setBounds(padding/2,propertyWidth/2,propertyWidth,propertyWidth/2);
             newpanel.add(counterLabel);
+            // Star rating
+            JLabel starLabel = new JLabel("",this.starIcon,SwingConstants.CENTER);
+            starLabel.setFont(new Font(Font.SERIF,Font.BOLD,15));
+            starLabel.setText("0");
+            starLabel.setBounds(0,propertyWidth,propertyWidth,propertyWidth/2);
+            newpanel.add(starLabel);
+            starLabel.setVisible(false);
 
         }
         //Square ne = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+0,Color.WHITE);
@@ -332,6 +359,13 @@ public class View implements Observer {
             counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
             counterLabel.setBounds(squareSize/2,padding/2,propertyWidth,propertyWidth/3);
             newpanel.add(counterLabel);
+            // Star rating
+            JLabel starLabel = new JLabel("",this.starIcon,SwingConstants.CENTER);
+            starLabel.setFont(new Font(Font.SERIF,Font.BOLD,15));
+            starLabel.setText("0");
+            starLabel.setBounds(squareSize/2,propertyWidth*2/3,propertyWidth,propertyWidth/3);
+            newpanel.add(starLabel);
+            starLabel.setVisible(false);
         }
 
         for (int i = 0; i < this.squares.size(); i++) {
@@ -383,13 +417,7 @@ public class View implements Observer {
         this.player2Panel.setBorder(new LineBorder(Color.black,1));
         this.outerPanel.add(player2Panel);
 
-//        this.players = new ArrayList<Player>();
-//        ImageIcon icon1 = createImageIcon("../resources/car1.png","player1");
-//        Player player1 = new Player("player1",icon1,this.board.getSquares().get(0));
-//        this.players.add(player1);
-//        ImageIcon icon2 = createImageIcon("../resources/car2.png","player2");
-//        Player player2 = new Player("player2",icon2,this.board.getSquares().get(0));
-//        this.players.add(player2);
+        this.starIcon = new ImageIcon(createImageIcon("resources/star1.png","Star rating").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
 
         createSquares();
         createPlayerInfoPanels();
