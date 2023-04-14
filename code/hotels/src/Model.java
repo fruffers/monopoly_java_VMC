@@ -16,14 +16,31 @@ public class Model extends Observable {
     public static final int DICESIDES = 12;
     private int diceScore;
     private int currentPlayer;
+    private boolean canBuy = false;
+    private boolean canPay = false;
+    private boolean canRollPass = false;
 
     public Model() {
         this.diceScore = 0;
         this.board = new Board();
         initialisePlayers();
+        this.canRollPass = true;
         //this.observers = new ArrayList<Observer>();
 
     }
+
+    public boolean getCanBuy() {
+        return this.canBuy;
+    }
+
+    public boolean getCanPay() {
+        return this.canPay;
+    }
+
+    public boolean getCanRollPass() {
+        return this.canRollPass;
+    }
+
 
     /** Returns an ImageIcon, or null if the path was invalid. */
     public ImageIcon createImageIcon(String path, String description) {
@@ -151,8 +168,12 @@ public class Model extends Observable {
 //    }
 
     public int rollDice() {
+        // Random number * MAXNUMBER + 1 and cast to int which truncates (cuts off the end/any floating numbers)
         // Gives random number from 0-1 then uses dicesides
+        // 0.9 * 12 = 10.8 + 1 = 11.8 > truncate to int = 11
+        // 0.95 * 12 = 11.4 + 1 = 12.4 > truncate to int = 12
         this.diceScore = (int)Math.random()*DICESIDES+1;
+        notifyObservers("Dice roll is "+diceScore);
         return this.diceScore;
     }
 
@@ -169,6 +190,7 @@ public class Model extends Observable {
     public void moveCounterForwards(String playerName, int diceNumber) {
         Player player = getPlayerFromName(playerName);
         player.setPosition(this.board.findSquareAfterSteps(player.getPosition(),diceNumber));
+        notifyObservers(playerName+" has moved forwards by "+diceNumber+" squares, to "+player.getPosition().getName());
     }
 
     public void buyProperty(String playerName, String squareName) {
@@ -177,6 +199,7 @@ public class Model extends Observable {
         if (location.isBuyable() && player.getBalance() >= location.getHotelPrice()) {
             player.chargeMoney(location.getHotelPrice());
             location.getHotel().setOwner(player);
+            notifyObservers(playerName+" has purchased "+squareName+" for £"+location.getHotelPrice());
         } // TODO: add error messages if unable to buy a hotel
     }
 
@@ -211,6 +234,11 @@ public class Model extends Observable {
             }
             // Charge rent
             payer.giveMoneyToPlayer(rent,payee);
+            ////////////// TODO: end game if payee is bankrupt
+//            if (payer.isBankrupt()) {
+//                this.isGameOver()
+//            }
+            notifyObservers(payerName+" has paid £"+rent+" rent to "+payee.getName());
         }
     }
 
@@ -231,6 +259,7 @@ public class Model extends Observable {
             if (player.getBalance() >= hotel.getUpgradeFee()) {
                 if (hotel.increaseStarRating()) {
                     player.chargeMoney(hotel.getUpgradeFee());
+                    notifyObservers(playerName+" has upgraded "+location.getName()+" which is now "+location.getHotelRating()+" stars.");
                     return true;
                 }
             }

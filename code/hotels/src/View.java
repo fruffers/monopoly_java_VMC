@@ -27,9 +27,11 @@ public class View implements Observer {
     ImageIcon starIcon;
     Model model;
     Controller controller;
+
     public View(Model model, Controller controller) throws InterruptedException, InvocationTargetException {
         this.model = model;
         this.controller = controller;
+        model.addObserver(this);
         this.squares = new ArrayList<JPanel>();
         // Use threads
         SwingUtilities.invokeAndWait(new Runnable() {
@@ -43,6 +45,12 @@ public class View implements Observer {
 
              });
 
+    }
+
+    private void updateButtons() {
+        boardPanel.getComponent(2).setEnabled(model.getCanRollPass());
+        boardPanel.getComponent(3).setEnabled(model.getCanBuy());
+        boardPanel.getComponent(4).setEnabled(model.getCanPay());
     }
 
     private void updateSquare(int squareIndex) {
@@ -69,6 +77,38 @@ public class View implements Observer {
             ((JLabel)square.getComponent(2)).add(new JLabel(playerCounter));
         }
 
+
+    }
+
+    private void updatePlayerInfoPanel(int playerIndex) {
+        JPanel playerPanel;
+        if (playerIndex == 0) {
+            // Player 1 panel
+            playerPanel = this.player1Panel;
+        } else {
+            // Player 2 panel
+            playerPanel = this.player2Panel;
+        }
+
+        String playerName = this.model.getPlayerName(playerIndex);
+        ((JLabel)playerPanel.getComponent(0)).setText("Name: "+playerName);
+        ((JLabel)playerPanel.getComponent(1)).setText("Bank: £"+this.model.getPlayerBalance(playerName));
+        // Sort hotels owned into groups and seperate with <br>
+        String hotelsOwned = new String("Hotels owned: ");
+        String previousGroup = new String("_");
+        // Get hotels owned by player
+        for (String hotelName: model.getHotelsOwnedByPlayer(playerName)) {
+            if (!hotelName.contains(previousGroup)) {
+                // Seperate groups with breakline
+                hotelsOwned += "<br>";
+                previousGroup = hotelName.substring(0,1);
+            }
+            hotelsOwned += hotelName;
+        }
+        ((JLabel)playerPanel.getComponent(2)).setText("<html>"+hotelsOwned+"</html>");
+
+        ImageIcon icon1 = this.model.getPlayerImageIcon(playerName);
+        ((JLabel)playerPanel.getComponent(3)).setIcon(icon1);
 
     }
 
@@ -146,6 +186,39 @@ public class View implements Observer {
         JLabel iconLabel2 = new JLabel(icon2);
         iconLabel2.setBounds(300-padding,padding,rowHeight*2,rowHeight*2);
         player2Panel.add(iconLabel2);
+    }
+
+    private void createButtons() {
+        JLabel playerTurnLabel = new JLabel("Player 1 turn",SwingConstants.CENTER);
+        playerTurnLabel.setBounds(squareSize*3/2,squareSize,squareSize*7/2,squareSize);
+        playerTurnLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        boardPanel.add(playerTurnLabel);
+
+
+        JLabel userMessageLabel = new JLabel("You rolled 5",SwingConstants.CENTER);
+        userMessageLabel.setBounds(squareSize*3/2,squareSize*5/3,squareSize*7/2,squareSize);
+        userMessageLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        boardPanel.add(userMessageLabel);
+
+
+        JButton rollDiceButton = new JButton("Roll/pass");
+        rollDiceButton.setBounds(squareSize*3/2,squareSize*9/2+padding,squareSize,squareSize/2);
+        rollDiceButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        rollDiceButton.addActionListener(this.controller);
+        boardPanel.add(rollDiceButton);
+
+        JButton buyButton = new JButton("Buy");
+        buyButton.setBounds(squareSize*11/4,squareSize*9/2+padding,squareSize,squareSize/2);
+        buyButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        boardPanel.add(buyButton);
+
+        JButton payButton = new JButton("Pay");
+        payButton.setBounds(squareSize*4,squareSize*9/2+padding,squareSize,squareSize/2);
+        payButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        boardPanel.add(payButton);
+
+        this.updateButtons();
+
     }
 
     private void createSquares() {
@@ -419,8 +492,10 @@ public class View implements Observer {
 
         this.starIcon = new ImageIcon(createImageIcon("resources/star1.png","Star rating").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
 
+        createButtons();
         createSquares();
         createPlayerInfoPanels();
+        updateTurn();
 
 
     }
@@ -443,11 +518,30 @@ public class View implements Observer {
 
     }
 
+    private void updateTurn() {
+        String playerName = model.getCurrentPlayerName();
+        ((JLabel)boardPanel.getComponent(0)).setText(playerName+"'s turn.");
+        ImageIcon icon = model.getPlayerImageIcon(playerName);
+        ((JLabel)boardPanel.getComponent(0)).setIcon(icon);
+
+    }
+
+    private void updateMessageLabel(String message) {
+        ((JLabel)boardPanel.getComponent(1)).setText(message);
+    }
+
 
     @Override
     public void update(Observable observable, Object o) {
+        // Object o could be instruction to player what should happen
+        String message = (String) o;
+        updateMessageLabel(message);
         for (int i = 0; i < this.squares.size(); i++) {
             updateSquare(i);
         }
+        updatePlayerInfoPanel(0);
+        updatePlayerInfoPanel(1);
+        this.updateTurn();
+        this.updateButtons();
     }
 }

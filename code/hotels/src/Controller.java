@@ -1,4 +1,7 @@
-public class Controller {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Controller implements ActionListener {
 
     private Model model;
     private View view;
@@ -22,6 +25,18 @@ public class Controller {
         this.model.rollDice();
     }
 
+    public void doPass() {
+
+    }
+
+    public void doBuy() {
+
+    }
+
+    public void doPay() {
+
+    }
+
     public void doMoveCounter(String playerName, int diceNumber) {
         this.model.moveCounterForwards(playerName, diceNumber);
     }
@@ -42,4 +57,12 @@ public class Controller {
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        // Gives label on button that was clicked
+        String action = actionEvent.getActionCommand();
+        if (action == "Roll/pass") {
+            this.doRollDice();
+        }
+    }
 }
