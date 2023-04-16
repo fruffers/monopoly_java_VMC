@@ -8,6 +8,10 @@ import java.lang.Math;
 import java.util.Observable;
 import java.util.Observer;
 
+// Model is given commands from controller
+// it can then update the controller on data changes
+// and ask it what to do
+// the controller will tell it what to do, it doesn't decide to do
 public class Model extends Observable {
     //private ArrayList<Observer> observers;
     private Board board;
@@ -172,8 +176,10 @@ public class Model extends Observable {
         // Gives random number from 0-1 then uses dicesides
         // 0.9 * 12 = 10.8 + 1 = 11.8 > truncate to int = 11
         // 0.95 * 12 = 11.4 + 1 = 12.4 > truncate to int = 12
-        this.diceScore = (int)Math.random()*DICESIDES+1;
+        this.diceScore = (int)(Math.random()*DICESIDES+1);
+        setChanged();
         notifyObservers("Dice roll is "+diceScore);
+        System.out.println(this.diceScore);
         return this.diceScore;
     }
 
@@ -288,6 +294,9 @@ public class Model extends Observable {
         return this.diceScore;
     }
 
+    public void doTurn(String playerName, String squareName) {
+        // Get player
+    }
 
 
 }

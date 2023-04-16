@@ -9,6 +9,8 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+// View observes Model for state changes
 public class View implements Observer {
     int emptySquares = 15;
     JFrame frame;
@@ -204,6 +206,7 @@ public class View implements Observer {
         JButton rollDiceButton = new JButton("Roll/pass");
         rollDiceButton.setBounds(squareSize*3/2,squareSize*9/2+padding,squareSize,squareSize/2);
         rollDiceButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        rollDiceButton.setActionCommand("roll/pass");
         rollDiceButton.addActionListener(this.controller);
         boardPanel.add(rollDiceButton);
 
@@ -536,9 +539,9 @@ public class View implements Observer {
         // Object o could be instruction to player what should happen
         String message = (String) o;
         updateMessageLabel(message);
-        for (int i = 0; i < this.squares.size(); i++) {
-            updateSquare(i);
-        }
+//        for (int i = 0; i < this.squares.size(); i++) {
+//            updateSquare(i);
+//        }
         updatePlayerInfoPanel(0);
         updatePlayerInfoPanel(1);
         this.updateTurn();

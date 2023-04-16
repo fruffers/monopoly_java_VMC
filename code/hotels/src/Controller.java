@@ -1,8 +1,9 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// connects View with the Model, gives commands
+// it will store data in Model and update the View
 public class Controller implements ActionListener {
-
     private Model model;
     private View view;
 
@@ -53,7 +54,15 @@ public class Controller implements ActionListener {
         this.model.upgradeHotel(playerName, squareName);
     }
 
-    private void playerMove() {
+    private void endGame() {
+
+    }
+
+    private void doTurn(String playerName, String squareName) {
+        this.model.doTurn(playerName,squareName);
+    }
+
+    public void rollDiceClick(ActionEvent event) {
 
     }
 
@@ -61,7 +70,7 @@ public class Controller implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         // Gives label on button that was clicked
         String action = actionEvent.getActionCommand();
-        if (action == "Roll/pass") {
+        if (action == "roll/pass") {
             this.doRollDice();
         }
     }
