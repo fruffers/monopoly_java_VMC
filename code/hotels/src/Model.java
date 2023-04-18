@@ -23,6 +23,11 @@ public class Model extends Observable {
     private boolean canBuy = false;
     private boolean canPay = false;
     private boolean canRollPass = false;
+    public enum ModelState{
+        READY_TO_ROLL,
+        ROLLED
+    }
+    ModelState state = ModelState.READY_TO_ROLL;
 
     public Model() {
         this.diceScore = 0;
@@ -32,6 +37,8 @@ public class Model extends Observable {
         //this.observers = new ArrayList<Observer>();
 
     }
+
+
 
     public boolean getCanBuy() {
         return this.canBuy;
@@ -171,6 +178,59 @@ public class Model extends Observable {
 //        return false;
 //    }
 
+    public void switchPlayer() {
+        // Increase index, and mod by players length to avoid index out of range
+        int curPlayer = (this.currentPlayer + 1) % this.players.size();
+        this.currentPlayer = curPlayer;
+        setChanged();
+        notifyObservers("Switch player turn to "+this.getCurrentPlayerName());
+    }
+
+    public void doBuy() {
+        Player player = this.getCurrentPlayer();
+        Square square = player.getPosition();
+        this.buyProperty(player.getName(),square.getName());
+    }
+
+    public void doPay() {
+        Player player = this.getCurrentPlayer();
+        Square square = player.getPosition();
+        Player owner = square.getOwner();
+        if (player == owner) {
+            // Free stay and upgrade hotel available
+            this.upgradeHotel(player.getName(),square.getName());
+        } else if (owner != null) {
+            this.payRent(player.getName(),square.getName());
+            if (this.isGameOver()) {
+                setChanged();
+                // TODO: Write who has won
+                notifyObservers("Game over!");
+            }
+        }
+    }
+
+    public void rollPass() throws InterruptedException {
+        // Decided whether to roll dice or pass to next player
+        if (this.state == ModelState.READY_TO_ROLL) {
+            int diceroll = this.rollDice();
+            setChanged();
+            notifyObservers("Dice roll is "+ diceroll);
+            Thread.sleep((long)100);
+            this.moveCounterForwards(this.getCurrentPlayerName(),diceroll);
+            this.state = ModelState.ROLLED;
+            doTurn();
+            setChanged();
+            notifyObservers(this.getCurrentPlayerName()+" has moved forwards by "+diceroll+" squares, to "+this.getCurrentPlayer().getPosition().getName());
+
+
+        } else if (this.state == ModelState.ROLLED) {
+            this.switchPlayer();
+            this.canBuy = false;
+            this.canPay = false;
+            this.state = ModelState.READY_TO_ROLL;
+        }
+    }
+
     public int rollDice() {
         // Random number * MAXNUMBER + 1 and cast to int which truncates (cuts off the end/any floating numbers)
         // Gives random number from 0-1 then uses dicesides
@@ -196,7 +256,12 @@ public class Model extends Observable {
     public void moveCounterForwards(String playerName, int diceNumber) {
         Player player = getPlayerFromName(playerName);
         player.setPosition(this.board.findSquareAfterSteps(player.getPosition(),diceNumber));
-        notifyObservers(playerName+" has moved forwards by "+diceNumber+" squares, to "+player.getPosition().getName());
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void buyProperty(String playerName, String squareName) {
@@ -205,8 +270,19 @@ public class Model extends Observable {
         if (location.isBuyable() && player.getBalance() >= location.getHotelPrice()) {
             player.chargeMoney(location.getHotelPrice());
             location.getHotel().setOwner(player);
+            // Change
+            this.canBuy = location.isBuyable();
+            this.canPay = player.getBalance() >= location.getHotel().getUpgradeFee();
+            setChanged();
             notifyObservers(playerName+" has purchased "+squareName+" for £"+location.getHotelPrice());
         } // TODO: add error messages if unable to buy a hotel
+        else if (player.getBalance() < location.getHotelPrice()) {
+            setChanged();
+            notifyObservers("Can't buy hotel, not enough money.");
+        } else if (location.isBuyable() == false) {
+            setChanged();
+            notifyObservers("Can't buy Hotel.");
+        }
     }
 
     public void payRent(String payerName, String squareName ) {
@@ -244,6 +320,7 @@ public class Model extends Observable {
 //            if (payer.isBankrupt()) {
 //                this.isGameOver()
 //            }
+            setChanged();
             notifyObservers(payerName+" has paid £"+rent+" rent to "+payee.getName());
         }
     }
@@ -268,7 +345,18 @@ public class Model extends Observable {
                     notifyObservers(playerName+" has upgraded "+location.getName()+" which is now "+location.getHotelRating()+" stars.");
                     return true;
                 }
+                else {
+                    setChanged();
+                    notifyObservers("Cannot upgrade hotel because it is already at "+Hotel.MAXRATING+" stars.");
+                }
+            } else {
+                // Don't have enough money to buy
+                setChanged();
+                notifyObservers("Not enough money to upgrade hotel.");
             }
+        } else {
+            setChanged();
+            notifyObservers("Can't upgrade because you don't own the hotel");
         }
         return false;
     }
@@ -294,8 +382,19 @@ public class Model extends Observable {
         return this.diceScore;
     }
 
-    public void doTurn(String playerName, String squareName) {
-        // Get player
+    public void doTurn() {
+        Player player = this.getCurrentPlayer();
+        this.canBuy = player.getPosition().isBuyable();
+        Player owner = player.getPosition().getHotelOwner();
+        if (owner == player) {
+            this.canPay = player.getBalance() >= player.getPosition().getHotel().getUpgradeFee();
+            this.canRollPass = true;
+        }
+        if (owner != null) {
+            this.canPay = true;
+            this.canRollPass = false;
+        }
+
     }
 
 

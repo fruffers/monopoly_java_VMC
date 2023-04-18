@@ -59,7 +59,7 @@ public class Controller implements ActionListener {
     }
 
     private void doTurn(String playerName, String squareName) {
-        this.model.doTurn(playerName,squareName);
+        this.model.doTurn();
     }
 
     public void rollDiceClick(ActionEvent event) {
@@ -70,8 +70,18 @@ public class Controller implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         // Gives label on button that was clicked
         String action = actionEvent.getActionCommand();
-        if (action == "roll/pass") {
-            this.doRollDice();
+            try {
+                if (action == "roll/pass") {
+                this.model.rollPass();
+                } else if (action == "buy") {
+                    this.model.doBuy();
+                } else if (action == "pay") {
+                    this.model.doPay();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+
         }
+
     }
 }

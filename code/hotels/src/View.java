@@ -33,6 +33,7 @@ public class View implements Observer {
     public View(Model model, Controller controller) throws InterruptedException, InvocationTargetException {
         this.model = model;
         this.controller = controller;
+        // Model observes View
         model.addObserver(this);
         this.squares = new ArrayList<JPanel>();
         // Use threads
@@ -40,6 +41,7 @@ public class View implements Observer {
             @Override
             public void run() {
                 createGUI();
+                // Update all the squares so that they initially will show all their labels and icons
                 for (int i = 0; i < 40; i++) {
                     updateSquare(i);
                 }
@@ -59,7 +61,9 @@ public class View implements Observer {
         JPanel square = this.squares.get(squareIndex);
         int price = model.getHotelPrice(squareIndex);
         if (price > 0) {
+            // If there is a hotel on the square
             ((JLabel)square.getComponent(0)).setText("£"+Integer.toString(model.getHotelPrice(squareIndex)));
+            // Set hotel image
             if (model.getHotelRating(squareIndex) == 0) {
                 square.getComponent(3).setVisible(false);
             } else {
@@ -74,10 +78,14 @@ public class View implements Observer {
             square.setBackground(model.getPlayerColor(owner));
         }
 
+        // Clear contents of previous label
+        JLabel iconLabel = ((JLabel)square.getComponent(2));
+        iconLabel.removeAll();
         for (String playername: this.model.getPlayerNamesOnSquare(squareIndex)) {
             ImageIcon playerCounter = this.model.getSmallImageIcon(playername);
-            ((JLabel)square.getComponent(2)).add(new JLabel(playerCounter));
+            iconLabel.add(new JLabel(playerCounter));
         }
+        square.repaint();
 
 
     }
@@ -213,11 +221,15 @@ public class View implements Observer {
         JButton buyButton = new JButton("Buy");
         buyButton.setBounds(squareSize*11/4,squareSize*9/2+padding,squareSize,squareSize/2);
         buyButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        buyButton.setActionCommand("buy");
+        buyButton.addActionListener(this.controller);
         boardPanel.add(buyButton);
 
         JButton payButton = new JButton("Pay");
         payButton.setBounds(squareSize*4,squareSize*9/2+padding,squareSize,squareSize/2);
         payButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
+        payButton.setActionCommand("pay");
+        payButton.addActionListener(this.controller);
         boardPanel.add(payButton);
 
         this.updateButtons();
@@ -264,10 +276,12 @@ public class View implements Observer {
             newpanel.setBorder(new LineBorder(Color.black,1));
             newpanel.setBackground(Color.white);
             this.squares.add(newpanel);
+            // Price label
             priceLabel = new JLabel("",SwingConstants.CENTER);
             priceLabel.setBounds(0,(squareSize*2)/3,propertyWidth,squareSize/3);
 //            priceLabel.setBounds(0,(propertyWidth*2)/3,propertyWidth,propertyWidth/3);
             newpanel.add(priceLabel);
+            // Name label
             nameLabel = new JLabel("",SwingConstants.CENTER);
             nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
             nameLabel.setBounds(0,0,propertyWidth,propertyWidth/2);
@@ -284,6 +298,7 @@ public class View implements Observer {
             starLabel.setText("0");
             starLabel.setBounds(0,propertyWidth,propertyWidth,propertyWidth/2);
             newpanel.add(starLabel);
+            // Set starlabel to invisible and we can make it visible later
             starLabel.setVisible(false);
 
         }
@@ -444,6 +459,7 @@ public class View implements Observer {
             starLabel.setVisible(false);
         }
 
+        // Add squares onto boardPanel
         for (int i = 0; i < this.squares.size(); i++) {
             this.boardPanel.add(this.squares.get(i));
         }
@@ -538,10 +554,11 @@ public class View implements Observer {
     public void update(Observable observable, Object o) {
         // Object o could be instruction to player what should happen
         String message = (String) o;
+        System.out.println(message);
         updateMessageLabel(message);
-//        for (int i = 0; i < this.squares.size(); i++) {
-//            updateSquare(i);
-//        }
+        for (int i = 0; i < this.squares.size(); i++) {
+            updateSquare(i);
+        }
         updatePlayerInfoPanel(0);
         updatePlayerInfoPanel(1);
         this.updateTurn();
