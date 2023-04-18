@@ -27,6 +27,7 @@ public class View implements Observer {
     ArrayList<Player> players;
     int padding = 10;
     ImageIcon starIcon;
+    ArrayList<ImageIcon> hotelIcons;
     Model model;
     Controller controller;
 
@@ -263,9 +264,8 @@ public class View implements Observer {
         counterLabel.setLayout(new BoxLayout(counterLabel,BoxLayout.X_AXIS));
         counterLabel.setBounds(padding,0,squareSize,squareSize/3);
         panelse.add(counterLabel);
-
-
         this.squares.add(panelse);
+
         // This is the bottom row
         for (int i = propertiesPerSide-1; i >= 0; i--) {
 //            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+i*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
@@ -300,6 +300,11 @@ public class View implements Observer {
             newpanel.add(starLabel);
             // Set starlabel to invisible and we can make it visible later
             starLabel.setVisible(false);
+            // Hotel icon label
+            JLabel hotelIconLabel = new JLabel("",this.hotelIcons.get(0),SwingConstants.CENTER);
+            hotelIconLabel.setBounds(0,propertyWidth/3,propertyWidth,propertyWidth/2);
+            newpanel.add(hotelIconLabel);
+            hotelIconLabel.setVisible(false);
 
         }
         JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
@@ -510,6 +515,8 @@ public class View implements Observer {
         this.outerPanel.add(player2Panel);
 
         this.starIcon = new ImageIcon(createImageIcon("resources/star1.png","Star rating").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        this.hotelIcons = new ArrayList<ImageIcon>();
+        this.fillHotelIcons();
 
         createButtons();
         createSquares();
@@ -517,6 +524,19 @@ public class View implements Observer {
         updateTurn();
 
 
+    }
+
+    public void fillHotelIcons() {
+        ImageIcon icon0 = new ImageIcon(createImageIcon("resources/hotel0.png","hotel 0").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        ImageIcon icon1 = new ImageIcon(createImageIcon("resources/hotel1.png","hotel 1").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        ImageIcon icon2 = new ImageIcon(createImageIcon("resources/hotel2.png","hotel 2").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        ImageIcon icon3 = new ImageIcon(createImageIcon("resources/hotel3.png","hotel 3").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        ImageIcon icon4 = new ImageIcon(createImageIcon("resources/hotel4.png","hotel 4").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
+        this.hotelIcons.add(icon0);
+        this.hotelIcons.add(icon1);
+        this.hotelIcons.add(icon2);
+        this.hotelIcons.add(icon3);
+        this.hotelIcons.add(icon4);
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
