@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -65,19 +66,16 @@ public class View implements Observer {
             // If there is a hotel on the square
             ((JLabel)square.getComponent(0)).setText("£"+Integer.toString(model.getHotelPrice(squareIndex)));
             // Set hotel image
-            if (model.getHotelRating(squareIndex) == 0) {
-                square.getComponent(3).setVisible(false);
-            } else {
-                ((JLabel)square.getComponent(3)).setText(Integer.toString(model.getHotelRating(squareIndex)));
-                square.getComponent(3).setVisible(true);
-            }
         }
         ((JLabel)square.getComponent(1)).setText(model.getSquareName(squareIndex));
 
         String owner = model.getHotelOwnerName(squareIndex);
         if (owner != null) {
             square.setBackground(model.getPlayerColor(owner));
+            ((JLabel)square.getComponent(3)).setText(Integer.toString(model.getHotelRating(squareIndex)));
+            square.getComponent(3).setVisible(owner != null);
         }
+
 
         // Clear contents of previous label
         JLabel iconLabel = ((JLabel)square.getComponent(2));
@@ -270,6 +268,11 @@ public class View implements Observer {
         for (int i = propertiesPerSide-1; i >= 0; i--) {
 //            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+i*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
             JPanel newpanel = new JPanel();
+
+            //newpanel.setActionMap("cheatmode");
+            newpanel.setName(Integer.toString(i));
+            newpanel.addMouseListener((MouseListener) this.controller);
+
             newpanel.setLayout(null);
             // x,y,width,height
             newpanel.setBounds(padding+squareSize+i*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,propertyWidth,squareSize);

@@ -1,9 +1,12 @@
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 // connects View with the Model, gives commands
 // it will store data in Model and update the View
-public class Controller implements ActionListener {
+public class Controller implements ActionListener, MouseListener {
     private Model model;
     private View view;
 
@@ -82,6 +85,35 @@ public class Controller implements ActionListener {
                 throw new RuntimeException(e);
 
         }
+
+    }
+
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+        // Cheat mode clicking the JPanel squares
+        JPanel squaresource = (JPanel) (mouseEvent.getSource());
+        //int squareindex = Integer.parseInt(mouseEvent.getComponent().getName());
+        model.cheatGoTo(squareindex);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
 
     }
 }

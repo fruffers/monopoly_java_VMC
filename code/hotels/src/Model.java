@@ -18,6 +18,7 @@ public class Model extends Observable {
     private ArrayList<Player> players;
     public static final int MAXPLAYERS = 2;
     public static final int DICESIDES = 12;
+    private boolean cheatmode;
     private int diceScore;
     private int currentPlayer;
     private boolean canBuy = false;
@@ -29,7 +30,8 @@ public class Model extends Observable {
     }
     ModelState state = ModelState.READY_TO_ROLL;
 
-    public Model() {
+    public Model(boolean cheatmode) {
+        this.cheatmode = cheatmode;
         this.diceScore = 0;
         this.board = new Board();
         initialisePlayers();
@@ -39,7 +41,18 @@ public class Model extends Observable {
     }
 
 
+    public void cheatGoTo(int squareindex) {
+        if (this.cheatmode && state == ModelState.READY_TO_ROLL) {
+            Square square = this.board.getSquareFromIndex(squareindex);
+            this.getCurrentPlayer().setPosition(square);
+            state = ModelState.ROLLED;
+            // Update all buttons
+            doTurn();
+            setChanged();
+            notifyObservers("Cheat mode: moved " + getCurrentPlayerName() + " to square " + square.getName());
 
+        }
+    }
     public boolean getCanBuy() {
         return this.canBuy;
     }
@@ -199,6 +212,7 @@ public class Model extends Observable {
         if (player == owner) {
             // Free stay and upgrade hotel available
             this.upgradeHotel(player.getName(),square.getName());
+            doTurn();
         } else if (owner != null) {
             this.payRent(player.getName(),square.getName());
             if (this.isGameOver()) {
@@ -320,6 +334,8 @@ public class Model extends Observable {
 //            if (payer.isBankrupt()) {
 //                this.isGameOver()
 //            }
+            canPay = false;
+            canRollPass = true;
             setChanged();
             notifyObservers(payerName+" has paid £"+rent+" rent to "+payee.getName());
         }
@@ -342,6 +358,7 @@ public class Model extends Observable {
             if (player.getBalance() >= hotel.getUpgradeFee()) {
                 if (hotel.increaseStarRating()) {
                     player.chargeMoney(hotel.getUpgradeFee());
+                    setChanged();
                     notifyObservers(playerName+" has upgraded "+location.getName()+" which is now "+location.getHotelRating()+" stars.");
                     return true;
                 }
@@ -387,10 +404,10 @@ public class Model extends Observable {
         this.canBuy = player.getPosition().isBuyable();
         Player owner = player.getPosition().getHotelOwner();
         if (owner == player) {
-            this.canPay = player.getBalance() >= player.getPosition().getHotel().getUpgradeFee();
+            this.canPay = player.getBalance() >= player.getPosition().getHotel().getUpgradeFee() && player.getPosition().getHotel().getStarRating() < Hotel.MAXRATING;
             this.canRollPass = true;
         }
-        if (owner != null) {
+        else if (owner != null) {
             this.canPay = true;
             this.canRollPass = false;
         }

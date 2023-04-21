@@ -11,7 +11,7 @@ public class Main implements ActionListener {
 
         System.out.println("Hello world!");
         //GUI gui = new GUI();
-        Model model = new Model();
+        Model model = new Model(true);
         Controller controller = new Controller(model);
         View view = new View(model,controller);
 
