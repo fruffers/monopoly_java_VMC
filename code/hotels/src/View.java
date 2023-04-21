@@ -243,6 +243,11 @@ public class View implements Observer {
 //        Square se = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
         JPanel panelse = new JPanel();
         panelse.setLayout(null);
+
+        // Set index number, the squares array changes dynamically so it increases
+        panelse.setName(Integer.toString(this.squares.size()));
+        panelse.addMouseListener((MouseListener) this.controller);
+
         // propertywidth is half of squareSize (it's the smaller squares)
         panelse.setBounds(padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,squareSize,squareSize);
         panelse.setBackground(Color.white);
@@ -269,8 +274,8 @@ public class View implements Observer {
 //            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+i*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
             JPanel newpanel = new JPanel();
 
-            //newpanel.setActionMap("cheatmode");
-            newpanel.setName(Integer.toString(i));
+            // Set index number, the squares array changes dynamically so it increases
+            newpanel.setName(Integer.toString(this.squares.size()));
             newpanel.addMouseListener((MouseListener) this.controller);
 
             newpanel.setLayout(null);
@@ -311,6 +316,12 @@ public class View implements Observer {
 
         }
         JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
+        panelsw.setLayout(null);
+
+        // Set index number, the squares array changes dynamically so it increases
+        panelsw.setName(Integer.toString(this.squares.size()));
+        panelsw.addMouseListener((MouseListener) this.controller);
+
         panelsw.setBounds(padding,padding+squareSize+propertiesPerSide*propertyWidth,squareSize,squareSize);
         panelsw.setBorder(new LineBorder(Color.black,1));
         panelsw.setBackground(Color.white);
@@ -333,6 +344,11 @@ public class View implements Observer {
         for (int j = propertiesPerSide-1; j >= 0; j--) {
             JPanel newpanel = new JPanel();
             newpanel.setLayout(null);
+
+            // Set index number, the squares array changes dynamically so it increases
+            newpanel.setName(Integer.toString(this.squares.size()));
+            newpanel.addMouseListener((MouseListener) this.controller);
+
             // x,y,width,height
             newpanel.setBounds(padding,padding+squareSize+j*propertyWidth,squareSize,propertyWidth);
             newpanel.setBorder(new LineBorder(Color.black,1));
@@ -362,6 +378,12 @@ public class View implements Observer {
             starLabel.setVisible(false);
         }
         JPanel panelnw = new JPanel();//new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+0,Color.WHITE);
+        panelnw.setLayout(null);
+
+        // Set index number, the squares array changes dynamically so it increases
+        panelnw.setName(Integer.toString(this.squares.size()));
+        panelnw.addMouseListener((MouseListener) this.controller);
+
         panelnw.setBounds(padding,padding,squareSize,squareSize);
         panelnw.setBorder(new LineBorder(Color.black,1));
         panelnw.setBackground(Color.white);
@@ -386,6 +408,11 @@ public class View implements Observer {
 //            this.squares.add(prop);
             JPanel newpanel = new JPanel();
             newpanel.setLayout(null);
+
+            // Set index number, the squares array changes dynamically so it increases
+            newpanel.setName(Integer.toString(this.squares.size()));
+            newpanel.addMouseListener((MouseListener) this.controller);
+
             // x,y,width,height
             newpanel.setBounds(padding+squareSize+j*propertyWidth,padding,propertyWidth,squareSize);
             newpanel.setBorder(new LineBorder(Color.black,1));
@@ -415,6 +442,12 @@ public class View implements Observer {
         }
         //Square ne = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+0,Color.WHITE);
         JPanel panelne = new JPanel();
+        panelne.setLayout(null);
+
+        // Set index number, the squares array changes dynamically so it increases
+        panelne.setName(Integer.toString(this.squares.size()));
+        panelne.addMouseListener((MouseListener) this.controller);
+
         panelne.setBounds(padding+squareSize+propertiesPerSide*propertyWidth,padding,squareSize,squareSize);
         panelne.setBorder(new LineBorder(Color.black,1));
         panelne.setBackground(Color.white);
@@ -439,6 +472,11 @@ public class View implements Observer {
 //            this.squares.add(prop);
             JPanel newpanel = new JPanel();
             newpanel.setLayout(null);
+
+            // Set index number, the squares array changes dynamically so it increases
+            newpanel.setName(Integer.toString(this.squares.size()));
+            newpanel.addMouseListener((MouseListener) this.controller);
+
             // x,y,width,height
             newpanel.setBounds(padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+j*propertyWidth,squareSize,propertyWidth);
             newpanel.setBorder(new LineBorder(Color.black,1));
@@ -575,16 +613,39 @@ public class View implements Observer {
 
     @Override
     public void update(Observable observable, Object o) {
-        // Object o could be instruction to player what should happen
-        String message = (String) o;
-        System.out.println(message);
-        updateMessageLabel(message);
-        for (int i = 0; i < this.squares.size(); i++) {
-            updateSquare(i);
+        if (model.isGameOver()) {
+            endgameScreen();
+        } else {
+            // Object o could be instruction to player what should happen
+            String message = (String) o;
+            System.out.println(message);
+            updateMessageLabel(message);
+            for (int i = 0; i < this.squares.size(); i++) {
+                updateSquare(i);
+            }
+            updatePlayerInfoPanel(0);
+            updatePlayerInfoPanel(1);
+            this.updateTurn();
+            this.updateButtons();
         }
-        updatePlayerInfoPanel(0);
-        updatePlayerInfoPanel(1);
-        this.updateTurn();
-        this.updateButtons();
+
+    }
+
+    private void endgameScreen() {
+        outerPanel.removeAll();
+        String winnerName = model.getWinnerName();
+        Color winnerColor = model.getPlayerColor(winnerName);
+        ImageIcon winnerIcon = model.getPlayerImageIcon(winnerName);
+        winnerIcon = new ImageIcon(winnerIcon.getImage().getScaledInstance(256,256,Image.SCALE_DEFAULT));
+        String winnerMessage = (String) "<html>" + winnerName + " has won the game!!!!! </html>";
+        JLabel winLabel = new JLabel(winnerMessage, SwingConstants.CENTER);
+        winLabel.setIcon(winnerIcon);
+        winLabel.setFont(new Font(Font.SERIF, Font.BOLD, 90));
+        winLabel.setBounds(0,0,outerPanel.getWidth(),outerPanel.getHeight());
+        // New game button
+        JButton newgameButton = new JButton("New game");
+        outerPanel.setBackground(winnerColor);
+        outerPanel.add(winLabel);
+        outerPanel.add(newgameButton);
     }
 }

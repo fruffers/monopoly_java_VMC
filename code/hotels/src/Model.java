@@ -24,6 +24,7 @@ public class Model extends Observable {
     private boolean canBuy = false;
     private boolean canPay = false;
     private boolean canRollPass = false;
+    private boolean initialised;
     public enum ModelState{
         READY_TO_ROLL,
         ROLLED
@@ -33,11 +34,23 @@ public class Model extends Observable {
     public Model(boolean cheatmode) {
         this.cheatmode = cheatmode;
         this.diceScore = 0;
+
         this.board = new Board();
         initialisePlayers();
         this.canRollPass = true;
+
+        //this.initialiseModel();
+//        this.board = new Board();
+//        initialisePlayers();
+//        this.canRollPass = true;
+//        this.initialised = true;
         //this.observers = new ArrayList<Observer>();
 
+    }
+
+    public void cheatMove(JPanel squaresource) {
+        //Square square = this.board.get
+        //this.getCurrentPlayer().setPosition(squaresource);
     }
 
 
@@ -108,6 +121,24 @@ public class Model extends Observable {
         }
         // TODO: Return error, player doesn't exist
         return 0;
+    }
+
+    public boolean getInitialised() {
+        return this.initialised;
+    }
+
+    public void setInitialised(boolean initialised) {
+        this.initialised = initialised;
+    }
+
+    public void initialiseModel() {
+        this.board = new Board();
+        initialisePlayers();
+        this.canRollPass = true;
+        this.initialised = true;
+        // Might have to run createGUI() again?
+        setChanged();
+        notifyObservers("Starting new game.");
     }
 
     public boolean isGameOver() {

@@ -80,6 +80,8 @@ public class Controller implements ActionListener, MouseListener {
                     this.model.doBuy();
                 } else if (action == "pay") {
                     this.model.doPay();
+                } else if (action == "newgame") {
+                    this.model.initialiseModel();
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -92,8 +94,10 @@ public class Controller implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         // Cheat mode clicking the JPanel squares
-        JPanel squaresource = (JPanel) (mouseEvent.getSource());
-        //int squareindex = Integer.parseInt(mouseEvent.getComponent().getName());
+        //JPanel squaresource = (JPanel) (mouseEvent.getSource());
+        int squareindex = Integer.parseInt(mouseEvent.getComponent().getName());
+        //System.out.println(squareindex);
+        //model.cheatMove(squaresource);
         model.cheatGoTo(squareindex);
     }
 

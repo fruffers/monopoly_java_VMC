@@ -11,24 +11,30 @@ public class Board {
     }
 
     public void createSquares() {
+        // Data we will use to add onto the squares/JPanels as text
         this.squares = new ArrayList<Square>();
         String[] names = new String[]{"GO","A1", "", "A2", "A3", "", "B1", "", "B2", "B3", "", "C1", "", "C2", "C3", "", "D1", "", "D2", "D3", "", "E1", "", "E2", "E3", "", "F1", "", "F2", "F3", "", "G1", "", "G2", "G3", "", "H1", "", "H2", "H3"};
         int[] prices = new int[]{0, 50, 0, 50, 70, 0, 100, 0, 100, 120, 0, 150, 0, 150, 170, 0, 200, 0, 200, 220, 0, 250, 0, 250, 270, 0, 300, 0, 300, 320, 0, 350, 0, 350, 370, 0, 400, 0, 400, 420};
 
         // Property counter
         int p = 0;
+        // Go through all names
         for (int i = 0; i < names.length; i++) {
             if (prices[i] > 0) {
+                // Square with hotel
                 this.squares.add(new Square(names[i],prices[i]));
             } else {
+                // Empty square
                 this.squares.add(new Square(names[i]));
             }
 
         }
+        // Map first letter in a hotel group to the group of hotels, e.g: { "A" : hotela1,hotela2,hotela3 }
         this.hotelGroups = new HashMap<String, ArrayList<Hotel>>();
         for (int i = 0; i < names.length; i++) {
             if (names[i].length() > 1 && isNumeric(names[i].substring(1,2))) {
                 String groupkey = names[i].substring(0,1);
+                // Check if they key already exists, if not then make the group from next positions that are always the same
                 if (!hotelGroups.containsKey(groupkey)) {
                     ArrayList<Hotel> hotelGroup = new ArrayList<Hotel>();
                     hotelGroup.add(squares.get(i).getHotel());

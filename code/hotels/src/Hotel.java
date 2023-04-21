@@ -26,7 +26,7 @@ public class Hotel {
             return 0;
         } else {
             // **************** TODO: consider if the player owns other hotels in group
-            return rating*price/10;
+            return (this.price/10)*(this.rating*this.rating);
         }
     }
 
