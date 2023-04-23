@@ -22,10 +22,10 @@ public class Board {
         for (int i = 0; i < names.length; i++) {
             if (prices[i] > 0) {
                 // Square with hotel
-                this.squares.add(new Square(names[i],prices[i]));
+                this.squares.add(new Square(names[i],prices[i],i));
             } else {
                 // Empty square
-                this.squares.add(new Square(names[i]));
+                this.squares.add(new Square(names[i],i));
             }
 
         }
@@ -55,6 +55,10 @@ public class Board {
             return false;
         }
 
+    }
+
+    public ArrayList<Square> getSquares() {
+        return this.squares;
     }
 
     public Square getSquareFromName(String squareName) {

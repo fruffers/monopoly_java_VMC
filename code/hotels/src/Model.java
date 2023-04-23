@@ -48,6 +48,10 @@ public class Model extends Observable {
 
     }
 
+    public boolean getCheatMode() {
+        return this.cheatmode;
+    }
+
     public void cheatMove(JPanel squaresource) {
         //Square square = this.board.get
         //this.getCurrentPlayer().setPosition(squaresource);
@@ -276,6 +280,19 @@ public class Model extends Observable {
         }
     }
 
+    public int getCurrentPlayerPosition() {
+        int curPlayer = this.getCurrentPlayer().getPosition().getPosition();
+        return curPlayer;
+    }
+
+    public ArrayList<Square> getSquares() {
+        return this.board.getSquares();
+    }
+
+    public int getMaxSquares() {
+        return this.board.getSquares().size();
+    }
+
     public int rollDice() {
         // Random number * MAXNUMBER + 1 and cast to int which truncates (cuts off the end/any floating numbers)
         // Gives random number from 0-1 then uses dicesides
@@ -296,6 +313,10 @@ public class Model extends Observable {
             }
         }
         return null;
+    }
+
+    public int getMaxPlayers() {
+        return this.players.size();
     }
 
     public void moveCounterForwards(String playerName, int diceNumber) {

@@ -644,8 +644,12 @@ public class View implements Observer {
         winLabel.setBounds(0,0,outerPanel.getWidth(),outerPanel.getHeight());
         // New game button
         JButton newgameButton = new JButton("New game");
+        newgameButton.setBounds(this.outerPanel.getWidth()/2,(this.outerPanel.getHeight()/2)-newgameButton.getWidth(),this.outerPanel.getWidth()/8,this.outerPanel.getHeight()/8);
+        newgameButton.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        newgameButton.setActionCommand("newgame");
+        newgameButton.addActionListener(this.controller);
         outerPanel.setBackground(winnerColor);
         outerPanel.add(winLabel);
-        outerPanel.add(newgameButton);
+        outerPanel.add(newgameButton, SwingConstants.CENTER);
     }
 }

@@ -16,12 +16,18 @@ public class Square {
     ImageIcon[] stars;
     ImageIcon hotelIcon;
 
-    Square(String name, int price) {
+    Square(String name, int price, int position) {
+        this.position = position;
         this.hotel = new Hotel(name,price);
     }
 
-    Square(String name) {
+    Square(String name, int position) {
+        this.position = position;
         this.name = name;
+    }
+
+    public int getPosition() {
+        return this.position;
     }
 
     public boolean hasHotel() {
