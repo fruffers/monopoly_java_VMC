@@ -9,6 +9,7 @@ public class CLIMain implements Observer {
     //static ArrayList<String> squaresPrinter;
     //static ArrayList<Square> squares;
     static Model model;
+    Scanner scanner;
     BufferedReader reader;
 
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
@@ -41,7 +42,8 @@ public class CLIMain implements Observer {
         while (optionchoice < 1 || optionchoice > options.size()) {
             System.out.println("Please select an option:");
             for (int i = 0; i < options.size(); i++) {
-                System.out.println("[" + i + 1 + "] " + options.get(i));
+                System.out.println("[" + (i + 1) + "] " + options.get(i));
+
             }
             try {
                 String getline = this.reader.readLine();
@@ -107,8 +109,12 @@ public class CLIMain implements Observer {
     }
 
     public CLIMain() throws IOException {
+        // Constructor
         // Only uses the model
         this.model = new Model(true);
+        this.reader = new BufferedReader((new InputStreamReader(System.in)));
+
+
         // GUI has no ring structure, it's a long list of square spaces, and then you move through that list
 //        for (Square i : model.getSquares()) {
 //            String squarename = i.getName();
