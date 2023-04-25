@@ -52,15 +52,29 @@ public class Model extends Observable {
         return this.cheatmode && this.state == ModelState.READY_TO_ROLL;
     }
 
-    public void cheatMove(JPanel squaresource) {
-        //Square square = this.board.get
-        //this.getCurrentPlayer().setPosition(squaresource);
-    }
-
-
     public void cheatGoTo(int squareindex) {
         if (this.cheatmode && state == ModelState.READY_TO_ROLL) {
             Square square = this.board.getSquareFromIndex(squareindex);
+            int currentPlayerSquare = this.getCurrentPlayerPosition();
+            if (squareindex > currentPlayerSquare) {
+                if (squareindex - currentPlayerSquare > 12) {
+                    setChanged();
+                    notifyObservers("Cheat mode more than 12 squares is illegal.");
+                    return;
+                }
+            } else if (squareindex < currentPlayerSquare) {
+                int finalIndex = squareindex + this.getMaxSquares();
+                if ((finalIndex - currentPlayerSquare) > 12) {
+                    setChanged();
+                    notifyObservers("Cheat mode more than 12 squares is illegal.");
+                    return;
+                }
+            } else {
+                // Clicked on same square (moved 0)
+                setChanged();
+                notifyObservers("Cheat mode cannot move 0 squares.");
+                return;
+            }
             this.getCurrentPlayer().setPosition(square);
             state = ModelState.ROLLED;
             // Update all buttons
@@ -87,7 +101,7 @@ public class Model extends Observable {
     public ImageIcon createImageIcon(String path, String description) {
         File file = new File("./");
         try {
-            System.out.println(file.getCanonicalPath()+"/"+path);
+            //System.out.println(file.getCanonicalPath()+"/"+path);
             String pathToIcon = new String(file.getCanonicalPath()+"/"+path);
             return new ImageIcon(pathToIcon, description);
 
