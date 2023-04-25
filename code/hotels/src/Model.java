@@ -49,7 +49,7 @@ public class Model extends Observable {
     }
 
     public boolean getCheatMode() {
-        return this.cheatmode;
+        return this.cheatmode && this.state == ModelState.READY_TO_ROLL;
     }
 
     public void cheatMove(JPanel squaresource) {
@@ -446,6 +446,20 @@ public class Model extends Observable {
         Player player = getPlayerFromName(playerName);
         return player.getColor();
     }
+
+    public int getColorComponentRed(String playerName) {
+        Player player = getPlayerFromName(playerName);
+        return player.getColorComponentRed();
+    }
+    public int getColorComponentBlue(String playerName) {
+        Player player = getPlayerFromName(playerName);
+        return player.getColorComponentBlue();
+    }
+    public int getColorComponentGreen(String playerName) {
+        Player player = getPlayerFromName(playerName);
+        return player.getColorComponentGreen();
+    }
+
 
     public int getDiceScore() {
         return this.diceScore;

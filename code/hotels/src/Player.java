@@ -26,6 +26,16 @@ public class Player {
     public Color getColor() {
         return this.color;
     }
+
+    public int getColorComponentRed() {
+        return this.color.getRed();
+    }
+    public int getColorComponentBlue() {
+        return this.color.getBlue();
+    }
+    public int getColorComponentGreen() {
+        return this.color.getGreen();
+    }
     public String getName() {
         return name;
     }

@@ -11,6 +11,8 @@ public class CLIMain implements Observer {
     static Model model;
     Scanner scanner;
     BufferedReader reader;
+    public static final String RESET = "\033[0m";
+    public static final String ALERTCOLOR = "\033[38;2;255;0;255m";
 
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         System.out.println("---------------CLI Hotels---------------");
@@ -22,6 +24,15 @@ public class CLIMain implements Observer {
         }
         cli.playGame();
 
+    }
+
+    private String getPlayerColorCode(String playername) {
+        int red = model.getColorComponentRed(playername);
+        int blue = model.getColorComponentBlue(playername);
+        int green = model.getColorComponentGreen(playername);
+        // ANSI escape sequence format - 38 is foreground-48 is background, 2 means it is static/solid color
+        String rgbformat = "\033[48;2;" + red + ";" + green + ";" + blue + "m";
+        return rgbformat;
     }
 
     public String getUserCommand() {
@@ -39,8 +50,11 @@ public class CLIMain implements Observer {
             options.add("cheat");
         }
         int optionchoice = -1;
+        String playername = model.getCurrentPlayerName();
+        String playerColorCode = this.getPlayerColorCode(playername);
         while (optionchoice < 1 || optionchoice > options.size()) {
-            System.out.println("Please select an option:");
+            System.out.println("Please select an option " + playerColorCode + playername + RESET + ":");
+            //System.out.println("\033[0;31m  red text");
             for (int i = 0; i < options.size(); i++) {
                 System.out.println("[" + (i + 1) + "] " + options.get(i));
 
@@ -94,15 +108,23 @@ public class CLIMain implements Observer {
     }
 
     private int cheatMove() {
-        System.out.println("How many squares do you want to move forwards (between 1-12)?: ");
+        // System.out.println("How many squares do you want to move forwards (between 1-12)?: ");
         int output = -1;
         while (output < 1 || output > 12) {
             try {
+                System.out.println("How many squares do you want to move forwards (between 1-12)?: ");
                 String cheati = this.reader.readLine();
                 output = new Integer(cheati);
             } catch (IOException e) {
-                System.out.println("Invalid option. Try again.");
                 //throw new RuntimeException(e);
+            } catch (NumberFormatException e) {
+                System.out.println("You must enter a number.");
+
+            } finally {
+                if (output < 1 || output > 12) {
+                    System.out.println("Invalid option. Try again.");
+                }
+
             }
         }
         return output;
@@ -113,6 +135,7 @@ public class CLIMain implements Observer {
         // Only uses the model
         this.model = new Model(true);
         this.reader = new BufferedReader((new InputStreamReader(System.in)));
+        this.model.addObserver(this);
 
 
         // GUI has no ring structure, it's a long list of square spaces, and then you move through that list
@@ -165,7 +188,8 @@ public class CLIMain implements Observer {
             String playername = model.getPlayerName(i);
             int playermoney = model.getBalance(i);
             ArrayList<String> hotellist = model.getHotelsOwnedByPlayer(playername);
-            System.out.println("Player: " + playername + "Balance: £" + Integer.toString(playermoney));
+            String playerColorString = this.getPlayerColorCode(playername);
+            System.out.println(playerColorString + "Player: " + playername + "\n" + "Balance: £" + Integer.toString(playermoney));
             for (int j = 0; j < hotellist.size(); j++) {
                 System.out.print(hotellist.get(j) + " ");
                 // Keeps 10 hotels on one line.
@@ -173,7 +197,8 @@ public class CLIMain implements Observer {
                     System.out.println();
                 }
             }
-            System.out.println("-----------------------------");
+            // RESET color
+            System.out.println(RESET + "-----------------------------");
         }
     }
 
@@ -185,14 +210,20 @@ public class CLIMain implements Observer {
             String owner = model.getHotelOwnerName(i);
             int starrating = model.getHotelRating(i);
             ArrayList<String> countersOnSquare = model.getPlayerNamesOnSquare(i);
+            for (int j = 0; j < countersOnSquare.size(); j++) {
+                countersOnSquare.set(j, this.getPlayerColorCode(countersOnSquare.get(j)) + countersOnSquare.get(j) + RESET);
+            }
 
-            String infostring = "Square " + i;
+            String infostring = "Square " + i + " ";
             infostring += squarename.length() < 1 ? "BLANK" : squarename;
             if (price > 0) {
                 infostring += " Hotel price: £" + price;
                 if (owner != null) {
-                    infostring += "Owned by: " + owner;
-                    infostring += "Star rating: " + starrating;
+                    String ownerColor = getPlayerColorCode(owner);
+                    infostring += ownerColor;
+                    infostring += " Owned by: " + owner;
+                    infostring += " Star rating: " + starrating;
+                    infostring += RESET;
                 }
             }
             infostring += " Counters on square: " + String.join(", ",countersOnSquare);
@@ -202,7 +233,7 @@ public class CLIMain implements Observer {
 
     @Override
     public void update(Observable observable, Object o) {
-        System.out.println((String)o);
+        System.out.println(ALERTCOLOR + (String)o + RESET);
     }
 
 
