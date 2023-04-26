@@ -39,10 +39,26 @@ class ModelTest {
     @org.junit.jupiter.api.Test
     void getCanPay() {
         ModelTesting modelTester = new ModelTesting(true);
+
         // Scenario: canpay is false if square is empty
+        Player player = modelTester.getPlayer(modelTester.getCurrentPlayerName());
+        modelTester.cheatGoTo(2);
+        assertFalse(modelTester.getCanPay(), "Error: Pay button should be disabled on empty square.");
+
+
         // Scenario: canpay is false if nobody owns the square
-        // Scenario: canpay is true if square has opposite player owner and a hotel
+        modelTester.cheatGoTo(3);
+        assertEquals(null, player.getPosition().getHotelOwner(), "Error: Test square hotel should not have an owner.");
+        assertFalse(modelTester.getCanPay(), "Error: No owner on hotel, should not be able to pay.");
+
+
         // Scenario: canpay true if player has enough money to upgrade and hotel is not 5 stars and current player owns this hotel
+
+
+        // Scenario: canpay is true if square has opposite player owner and a hotel
+
+
+
 
 
     }
