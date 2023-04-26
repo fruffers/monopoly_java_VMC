@@ -26,10 +26,25 @@ class ModelTest {
 
     @org.junit.jupiter.api.Test
     void getCanBuy() {
+        ModelTesting modelTester = new ModelTesting(true);
+        // Scenario: Check canbuy is false if not enough money to buy hotel
+        Player curPlayer = modelTester.getPlayer(modelTester.getCurrentPlayerName());
+        modelTester.cheatGoTo(1);
+        assertTrue(modelTester.getCanBuy(), "Error: Buying property should be enabled.");
+        curPlayer.chargeMoney(1999);
+        assertFalse(modelTester.getCanBuy(), "Error: Hotel is still buyable despite not having enough money.");
+
     }
 
     @org.junit.jupiter.api.Test
     void getCanPay() {
+        ModelTesting modelTester = new ModelTesting(true);
+        // Scenario: canpay is false if square is empty
+        // Scenario: canpay is false if nobody owns the square
+        // Scenario: canpay is true if square has opposite player owner and a hotel
+        // Scenario: canpay true if player has enough money to upgrade and hotel is not 5 stars and current player owns this hotel
+
+
     }
 
     @org.junit.jupiter.api.Test

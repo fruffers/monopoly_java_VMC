@@ -12,6 +12,7 @@ import java.util.Observer;
 // it can then update the controller on data changes
 // and ask it what to do
 // the controller will tell it what to do, it doesn't decide to do
+
 public class Model extends Observable {
     //private ArrayList<Observer> observers;
     private Board board;
@@ -21,10 +22,11 @@ public class Model extends Observable {
     private boolean cheatmode;
     private int diceScore;
     private int currentPlayer;
-    private boolean canBuy = false;
+    // private boolean canBuy = false;
+    private boolean initialised;
+    // private boolean canBuy = false;
     private boolean canPay = false;
     private boolean canRollPass = false;
-    private boolean initialised;
     public enum ModelState{
         READY_TO_ROLL,
         ROLLED
@@ -34,6 +36,7 @@ public class Model extends Observable {
     public Model(boolean cheatmode) {
         this.cheatmode = cheatmode;
         this.diceScore = 0;
+
 
         this.board = new Board();
         initialisePlayers();
@@ -85,10 +88,23 @@ public class Model extends Observable {
         }
     }
     public boolean getCanBuy() {
-        return this.canBuy;
+        Square location = this.getCurrentPlayer().getPosition();
+        return this.state == ModelState.ROLLED && location.isBuyable() && this.getCurrentPlayer().getBalance() >= location.getHotelPrice();
     }
 
     public boolean getCanPay() {
+        Square location = this.getCurrentPlayer().getPosition();
+//        Hotel hotel = location.getHotel();
+        if (this.state == ModelState.READY_TO_ROLL) {
+            return false;
+        }
+        else if (location.getHotel() == null) {
+            return false;
+        } else if (!location.getHotel().hasOwner()) {
+            return false;
+        } else if (location.getHotel().getOwner() == this.getCurrentPlayer() && location.getHotel().getUpgradeFee() <= this.getCurrentPlayer().getBalance() && location.getHotel().getStarRating() < Hotel.MAXRATING) {
+            return true;
+        }
         return this.canPay;
     }
 
@@ -288,7 +304,7 @@ public class Model extends Observable {
 
         } else if (this.state == ModelState.ROLLED) {
             this.switchPlayer();
-            this.canBuy = false;
+            //this.canBuy = false;
             this.canPay = false;
             this.state = ModelState.READY_TO_ROLL;
         }
@@ -320,7 +336,7 @@ public class Model extends Observable {
     }
 
     // Helper method
-    private Player getPlayerFromName(String playerName) {
+    protected Player getPlayerFromName(String playerName) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName() == playerName) {
                 return players.get(i);
@@ -351,7 +367,7 @@ public class Model extends Observable {
             player.chargeMoney(location.getHotelPrice());
             location.getHotel().setOwner(player);
             // Change
-            this.canBuy = location.isBuyable();
+            // this.canBuy = location.isBuyable();
             this.canPay = player.getBalance() >= location.getHotel().getUpgradeFee();
             setChanged();
             notifyObservers(playerName+" has purchased "+squareName+" for £"+location.getHotelPrice());
@@ -481,7 +497,7 @@ public class Model extends Observable {
 
     public void doTurn() {
         Player player = this.getCurrentPlayer();
-        this.canBuy = player.getPosition().isBuyable();
+        // this.canBuy = player.getPosition().isBuyable();
         Player owner = player.getPosition().getHotelOwner();
         if (owner == player) {
             this.canPay = player.getBalance() >= player.getPosition().getHotel().getUpgradeFee() && player.getPosition().getHotel().getStarRating() < Hotel.MAXRATING;
