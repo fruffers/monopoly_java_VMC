@@ -13,7 +13,7 @@ import javax.swing.border.LineBorder;
 
 // View observes Model for state changes
 public class View implements Observer {
-    int emptySquares = 15;
+    boolean initialised;
     JFrame frame;
     JPanel outerPanel;
     JPanel boardPanel;
@@ -22,13 +22,9 @@ public class View implements Observer {
     Container container;
     int squareSize = 150;
     int propertiesPerSide = 9;
-    //Board board;
     ArrayList<JPanel> squares;
-    // TODO: Remove reference to board and players objects
-    ArrayList<Player> players;
     int padding = 10;
     ImageIcon starIcon;
-    ArrayList<ImageIcon> hotelIcons;
     Model model;
     Controller controller;
 
@@ -38,6 +34,7 @@ public class View implements Observer {
         // Model observes View
         model.addObserver(this);
         this.squares = new ArrayList<JPanel>();
+
         // Use threads
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override
@@ -65,7 +62,6 @@ public class View implements Observer {
         if (price > 0) {
             // If there is a hotel on the square
             ((JLabel)square.getComponent(0)).setText("£"+Integer.toString(model.getHotelPrice(squareIndex)));
-            // Set hotel image
         }
         ((JLabel)square.getComponent(1)).setText(model.getSquareName(squareIndex));
 
@@ -74,6 +70,12 @@ public class View implements Observer {
             square.setBackground(model.getPlayerColor(owner));
             ((JLabel)square.getComponent(3)).setText(Integer.toString(model.getHotelRating(squareIndex)));
             square.getComponent(3).setVisible(owner != null);
+        } else {
+            square.setBackground(Color.white);
+            if (square.getComponents().length > 3) {
+                // Get star label
+                square.getComponent(3).setVisible(owner != null);
+            }
         }
 
 
@@ -308,11 +310,6 @@ public class View implements Observer {
             newpanel.add(starLabel);
             // Set starlabel to invisible and we can make it visible later
             starLabel.setVisible(false);
-            // Hotel icon label
-            JLabel hotelIconLabel = new JLabel("",this.hotelIcons.get(0),SwingConstants.CENTER);
-            hotelIconLabel.setBounds(0,propertyWidth/3,propertyWidth,propertyWidth/2);
-            newpanel.add(hotelIconLabel);
-            hotelIconLabel.setVisible(false);
 
         }
         JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
@@ -354,8 +351,6 @@ public class View implements Observer {
             newpanel.setBorder(new LineBorder(Color.black,1));
             newpanel.setBackground(Color.white);
             this.squares.add(newpanel);
-            //this.nameLabel.setBounds(0,squareBound[1]/3,squareBound[0]/2,squareBound[1]/2);
-//            this.priceLabel.setBounds(squareBound[0]/2,squareBound[1]/2,squareBound[0]/2,squareBound[1]/3);
             priceLabel = new JLabel("",SwingConstants.LEFT);
             priceLabel.setBounds(squareSize/9,propertyWidth/3,squareSize/2,propertyWidth/3);
             newpanel.add(priceLabel);
@@ -404,8 +399,6 @@ public class View implements Observer {
 
         // This is the top row
         for (int j = 0; j < propertiesPerSide; j++) {
-//            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+j*propertyWidth,padding+0,Color.WHITE);
-//            this.squares.add(prop);
             JPanel newpanel = new JPanel();
             newpanel.setLayout(null);
 
@@ -440,7 +433,7 @@ public class View implements Observer {
             starLabel.setVisible(false);
 
         }
-        //Square ne = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+0,Color.WHITE);
+
         JPanel panelne = new JPanel();
         panelne.setLayout(null);
 
@@ -468,8 +461,6 @@ public class View implements Observer {
 
         // This is the right row
         for (int j = 0; j < propertiesPerSide; j++) {
-//            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{squareSize,propertyWidth},padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+j*propertyWidth,Color.WHITE);
-//            this.squares.add(prop);
             JPanel newpanel = new JPanel();
             newpanel.setLayout(null);
 
@@ -536,15 +527,6 @@ public class View implements Observer {
         this.boardPanel.setBackground(Color.lightGray);
         this.outerPanel.add(this.boardPanel);
 
-//        this.board = new GUIBoard(this.boardPanel,0,0,1000,1000);
-
-//        this.playerInfoPanel = new JPanel(null);
-//        this.playerInfoPanel.setBounds(1000,0,400,1000);
-//        //this.playerInfoPanel.setBackground(new Color(199, 199, 97));
-//        this.playerInfoPanel.setBorder(new LineBorder(Color.black,1));
-//        this.outerPanel.add(this.playerInfoPanel);
-
-        //createPlayerInfoPanel(this.playerInfoPanel);
 
         this.player1Panel = new JPanel(null);
         this.player1Panel.setBounds(1000,0,400,500);
@@ -556,28 +538,13 @@ public class View implements Observer {
         this.outerPanel.add(player2Panel);
 
         this.starIcon = new ImageIcon(createImageIcon("resources/star1.png","Star rating").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        this.hotelIcons = new ArrayList<ImageIcon>();
-        this.fillHotelIcons();
 
         createButtons();
         createSquares();
         createPlayerInfoPanels();
         updateTurn();
+        this.initialised = true;
 
-
-    }
-
-    public void fillHotelIcons() {
-        ImageIcon icon0 = new ImageIcon(createImageIcon("resources/hotel0.png","hotel 0").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        ImageIcon icon1 = new ImageIcon(createImageIcon("resources/hotel1.png","hotel 1").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        ImageIcon icon2 = new ImageIcon(createImageIcon("resources/hotel2.png","hotel 2").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        ImageIcon icon3 = new ImageIcon(createImageIcon("resources/hotel3.png","hotel 3").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        ImageIcon icon4 = new ImageIcon(createImageIcon("resources/hotel4.png","hotel 4").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
-        this.hotelIcons.add(icon0);
-        this.hotelIcons.add(icon1);
-        this.hotelIcons.add(icon2);
-        this.hotelIcons.add(icon3);
-        this.hotelIcons.add(icon4);
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
@@ -592,10 +559,6 @@ public class View implements Observer {
             System.err.println("Couldn't find file: " + path);
         }
         return null;
-    }
-
-    private void updateBoardPanel() {
-
     }
 
     private void updateTurn() {
@@ -616,6 +579,10 @@ public class View implements Observer {
         if (model.isGameOver()) {
             endgameScreen();
         } else {
+            if (!initialised){
+                this.frame.dispose();
+                createGUI();
+            }
             // Object o could be instruction to player what should happen
             String message = (String) o;
             System.out.println(message);
@@ -632,6 +599,7 @@ public class View implements Observer {
     }
 
     private void endgameScreen() {
+        initialised = false;
         outerPanel.removeAll();
         String winnerName = model.getWinnerName();
         Color winnerColor = model.getPlayerColor(winnerName);

@@ -1,20 +1,10 @@
 import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.LineBorder;
 
 public class Square {
 
     private Hotel hotel;
     private String name;
-    private JLabel label;
     private int position;
-    private String description;
-    //private JPanel panel;
-    JLabel nameLabel;
-    JLabel priceLabel;
-    JLabel imageLabel;
-    ImageIcon[] stars;
-    ImageIcon hotelIcon;
 
     Square(String name, int price, int position) {
         this.position = position;
@@ -89,48 +79,8 @@ public class Square {
         return null;
     }
 
-//    Square(JPanel boardPanel, String name,float price,int[] squareBound,int xval,int yval,Color colour) {
-//        this.name = name;
-//        this.panel = new JPanel();
-//        this.panel.setLayout(null);
-//        this.panel.setBounds(xval,yval,squareBound[0],squareBound[1]);
-//        this.panel.setBackground(colour);
-//        this.panel.setBorder(new LineBorder(Color.black,1));
-//        if (price == 0) {
-//            this.priceLabel = new JLabel();
-//        } else {
-//            this.priceLabel = new JLabel("£"+ Float.toString(price), SwingConstants.CENTER);
-//        }
-//        this.nameLabel = new JLabel(name,SwingConstants.CENTER);
-//        this.nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,30));
-//        if (squareBound[0] < squareBound[1]) {
-//            // Vertical square
-//            this.nameLabel.setBounds(0,0,squareBound[0],squareBound[1]/2);
-//            this.priceLabel.setBounds(0,(squareBound[1]*2)/3,squareBound[0],squareBound[1]/3);
-//        } else if (squareBound[0] > squareBound[1]) {
-//            // Horizontal square
-//            this.nameLabel.setBounds(0,squareBound[1]/3,squareBound[0]/2,squareBound[1]/2);
-//            this.priceLabel.setBounds(squareBound[0]/2,squareBound[1]/2,squareBound[0]/2,squareBound[1]/3);
-//        } else {
-//            // GO square
-//            this.nameLabel.setBounds(0,0,squareBound[0],squareBound[1]);
-//            this.nameLabel.setFont(new Font(Font.SERIF,Font.BOLD,60));
-//        }
-//        // Add all the labels to the panel Square and board
-//        this.panel.add(priceLabel);
-//        this.panel.add(nameLabel);
-//        boardPanel.add(this.panel);
-//    }
-
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
     }
 
-//    public JPanel getPanel() {
-//        return this.panel;
-//    }
-
-    public void addNeighbour() {
-
-    }
 }

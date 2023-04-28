@@ -6,14 +6,12 @@ public class Hotel {
     private Player owner;
     private int rating;
     public static final int MAXRATING = 5;
-//    public ImageIcon image;
 
     public Hotel(String name, int price) {
         this.name = name;
         this.price = price;
         this.rating = 0;
         this.owner = null;
-//        this.image = image;
 
     }
 
@@ -25,7 +23,6 @@ public class Hotel {
         if (owner == null) {
             return 0;
         } else {
-            // **************** TODO: consider if the player owns other hotels in group
             return (this.price/10)*(this.rating*this.rating);
         }
     }
@@ -44,9 +41,6 @@ public class Hotel {
             return true;
         }
         return false;
-    }
-    private void setPrice(int price) {
-        this.price = price;
     }
 
     public int getPrice() {
@@ -69,9 +63,6 @@ public class Hotel {
         return owner;
     }
 
-//    private float calculateRent() {
-//        // Calculate rent by
-//    }
 
 
 }

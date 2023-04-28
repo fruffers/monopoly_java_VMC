@@ -3,13 +3,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.lang.Math;
 import java.util.Observable;
-import java.util.Observer;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 // Model is given commands from controller
 // it can then update the controller on data changes
@@ -17,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 // the controller will tell it what to do, it doesn't decide to do
 
 public class Model extends Observable {
-    //private ArrayList<Observer> observers;
     private Board board;
     private ArrayList<Player> players;
     public static final int MAXPLAYERS = 2;
@@ -25,10 +19,7 @@ public class Model extends Observable {
     private boolean cheatmode;
     private int diceScore;
     private int currentPlayer;
-    // private boolean canBuy = false;
     private boolean initialised;
-    // private boolean canBuy = false;
-    //private boolean canPay = false;
     private boolean canRollPass = false;
     private boolean justPayed = false;
     public enum ModelState{
@@ -115,7 +106,6 @@ public class Model extends Observable {
     public ImageIcon createImageIcon(String path, String description) {
         File file = new File("./");
         try {
-            //System.out.println(file.getCanonicalPath()+"/"+path);
             String pathToIcon = new String(file.getCanonicalPath()+"/"+path);
             return new ImageIcon(pathToIcon, description);
 
@@ -173,7 +163,6 @@ public class Model extends Observable {
                 return this.players.get(i).getBalance();
             }
         }
-        // TODO: Return error, player doesn't exist
         return 0;
     }
 
@@ -189,8 +178,8 @@ public class Model extends Observable {
         this.board = new Board();
         initialisePlayers();
         this.canRollPass = true;
+        this.state = ModelState.READY_TO_ROLL;
         this.initialised = true;
-        // Might have to run createGUI() again?
         setChanged();
         notifyObservers("Starting new game.");
     }
@@ -295,7 +284,6 @@ public class Model extends Observable {
             this.payRent(player.getName(),square.getName());
             if (this.isGameOver()) {
                 setChanged();
-                // TODO: Write who has won
                 notifyObservers("Game over!");
             }
         }
@@ -317,8 +305,6 @@ public class Model extends Observable {
 
         } else if (this.state == ModelState.ROLLED) {
             this.switchPlayer();
-            //this.canBuy = false;
-            //this.canPay = false;
             this.state = ModelState.READY_TO_ROLL;
         }
     }
@@ -380,11 +366,9 @@ public class Model extends Observable {
             player.chargeMoney(location.getHotelPrice());
             location.getHotel().setOwner(player);
             // Change
-            // this.canBuy = location.isBuyable();
-            //this.canPay = player.getBalance() >= location.getHotel().getUpgradeFee();
             setChanged();
             notifyObservers(playerName+" has purchased "+squareName+" for £"+location.getHotelPrice());
-        } // TODO: add error messages if unable to buy a hotel
+        }
         else if (player.getBalance() < location.getHotelPrice()) {
             setChanged();
             notifyObservers("Can't buy hotel, not enough money.");
@@ -465,7 +449,6 @@ public class Model extends Observable {
                     setChanged();
                     notifyObservers(playerName+" has upgraded "+location.getName()+" which is now "+location.getHotelRating()+" stars.");
                     upgradeSuccess = true;
-                    //return true;
                 }
                 else {
                     setChanged();
@@ -489,7 +472,6 @@ public class Model extends Observable {
         assert(hotel.getStarRating() == beforeRating || upgradeSuccess) : "Error: Star rating should be the same as before attempted upgrade.";
         assert(player.getBalance() == beforeBalance || upgradeSuccess) : "Error: Balance should be the same as before attempted upgrade";
 
-//        assert()
         return upgradeSuccess;
     }
 
@@ -530,14 +512,11 @@ public class Model extends Observable {
 
     public void doTurn() {
         Player player = this.getCurrentPlayer();
-        // this.canBuy = player.getPosition().isBuyable();
         Player owner = player.getPosition().getHotelOwner();
         if (owner == player) {
-            //this.canPay = player.getBalance() >= player.getPosition().getHotel().getUpgradeFee() && player.getPosition().getHotel().getStarRating() < Hotel.MAXRATING;
             this.canRollPass = true;
         }
         else if (owner != null) {
-            //this.canPay = true;
             this.canRollPass = false;
         }
 

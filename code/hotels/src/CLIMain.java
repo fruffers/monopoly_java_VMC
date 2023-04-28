@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CLIMain implements Observer {
-//    static ArrayList<List<String>> squaresPrinter;
-    //static ArrayList<String> squaresPrinter;
-    //static ArrayList<Square> squares;
     static Model model;
-    Scanner scanner;
     BufferedReader reader;
     public static final String RESET = "\033[0m";
     public static final String ALERTCOLOR = "\033[38;2;255;0;255m";
@@ -54,7 +50,6 @@ public class CLIMain implements Observer {
         String playerColorCode = this.getPlayerColorCode(playername);
         while (optionchoice < 1 || optionchoice > options.size()) {
             System.out.println("Please select an option " + playerColorCode + playername + RESET + ":");
-            //System.out.println("\033[0;31m  red text");
             for (int i = 0; i < options.size(); i++) {
                 System.out.println("[" + (i + 1) + "] " + options.get(i));
 
@@ -64,7 +59,6 @@ public class CLIMain implements Observer {
                 optionchoice = new Integer(getline);
             } catch (IOException e) {
                 System.out.println("Invalid input, please try again.");
-                //throw new RuntimeException(e);
             }
         }
         return options.get(optionchoice - 1);
@@ -108,7 +102,6 @@ public class CLIMain implements Observer {
     }
 
     private int cheatMove() {
-        // System.out.println("How many squares do you want to move forwards (between 1-12)?: ");
         int output = -1;
         while (output < 1 || output > 12) {
             try {
@@ -116,7 +109,6 @@ public class CLIMain implements Observer {
                 String cheati = this.reader.readLine();
                 output = new Integer(cheati);
             } catch (IOException e) {
-                //throw new RuntimeException(e);
             } catch (NumberFormatException e) {
                 System.out.println("You must enter a number.");
 
@@ -136,52 +128,8 @@ public class CLIMain implements Observer {
         this.model = new Model(true);
         this.reader = new BufferedReader((new InputStreamReader(System.in)));
         this.model.addObserver(this);
+    }
 
-
-        // GUI has no ring structure, it's a long list of square spaces, and then you move through that list
-//        for (Square i : model.getSquares()) {
-//            String squarename = i.getName();
-//            int price = i.getHotelPrice();
-//            String owner = i.getHotelOwner().getName();
-//            int starrating = i.getHotelRating();
-//
-//            String infostring = "Square "+i;
-//            infostring += squarename.length() < 1 ? "BLANK" : squarename;
-//            if (price > 0) {
-//                infostring += "\nHotel price: £"+ price;
-//                if (owner != null) {
-//                    infostring += "Owned by: " + owner;
-//                    infostring += "Star rating: " + starrating;
-//                }
-//            }
-
-            //System.out.println();
-            //squaresPrinter.add(squarename+(Integer.toString(price))+owner+Integer.toString(starrating));
-
-        }
-//        System.out.println("<html>"+model.getSquares()+"</html>");
-//        this.reader = new BufferedReader((new InputStreamReader(System.in)));
-//        while (!model.isGameOver()) {
-//            // Display CLI version of the button presses
-//            System.out.println("Press enter to roll the dice");
-//            String scanString = scanner.nextLine();
-//            // If enter key pressed
-//            if (scanner.hasNextLine()) {
-//                try {
-//                    model.rollPass();
-//                    // TODO: How will message be displayed if we can't use observer?
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-            //String input = reader.readLine();
-
-            //model.doTurn();
-            //System.out.println("<html>"+model.getSquares()+"</html>");
-        //}
-        //this.squares = model.getSquares();
-        // Create players
-    //}
 
     public void printPlayersInfo() {
         for (int i = 0; i < model.getMaxPlayers(); i++) {
@@ -203,7 +151,6 @@ public class CLIMain implements Observer {
     }
 
     public void printBoard() {
-        //System.out.println("<html>"+model.getSquares()+"</html>");
         for (int i = 0; i < model.getMaxSquares(); i++) {
             String squarename = model.getSquareName(i);
             int price = model.getHotelPrice(i);

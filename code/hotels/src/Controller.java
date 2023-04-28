@@ -14,8 +14,6 @@ public class Controller implements ActionListener, MouseListener {
         // Model must be created first and then the controller and then the view
         // we can have multiple controllers and views but only one model
         this.model = model;
-        //view = new View(model);
-        //view.getButton().addActionListener(e->movePlayer());
 
     }
 
@@ -27,18 +25,6 @@ public class Controller implements ActionListener, MouseListener {
     public void doRollDice() {
         // Called by eventclickhandler from View and tell Model the dice roll
         this.model.rollDice();
-    }
-
-    public void doPass() {
-
-    }
-
-    public void doBuy() {
-
-    }
-
-    public void doPay() {
-
     }
 
     public void doMoveCounter(String playerName, int diceNumber) {
@@ -57,17 +43,10 @@ public class Controller implements ActionListener, MouseListener {
         this.model.upgradeHotel(playerName, squareName);
     }
 
-    private void endGame() {
-
-    }
-
     private void doTurn(String playerName, String squareName) {
         this.model.doTurn();
     }
 
-    public void rollDiceClick(ActionEvent event) {
-
-    }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
@@ -94,10 +73,7 @@ public class Controller implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         // Cheat mode clicking the JPanel squares
-        //JPanel squaresource = (JPanel) (mouseEvent.getSource());
         int squareindex = Integer.parseInt(mouseEvent.getComponent().getName());
-        //System.out.println(squareindex);
-        //model.cheatMove(squaresource);
         model.cheatGoTo(squareindex);
     }
 
