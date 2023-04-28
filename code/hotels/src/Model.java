@@ -8,6 +8,9 @@ import java.lang.Math;
 import java.util.Observable;
 import java.util.Observer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 // Model is given commands from controller
 // it can then update the controller on data changes
 // and ask it what to do
@@ -124,6 +127,13 @@ public class Model extends Observable {
 
 
     public void initialisePlayers() {
+        /** @pre. this.players is null
+         * @post. 2 players created, both have £2000, both start at position 0 and both players are
+         * in the players list.
+         */
+        assert (this.players == null) : "players must be null";
+
+
         this.players = new ArrayList<Player>();
         ImageIcon icon1 = createImageIcon("resources/car4.png","player1");
         Player player1 = new Player("player1",Color.yellow,icon1);
@@ -136,6 +146,21 @@ public class Model extends Observable {
         this.players.add(player1);
         this.players.add(player2);
         this.currentPlayer = 0;
+
+        assert(null != player1) : "Error: player1 was not created correctly.";
+        assert(null != player2) : "Error: player2 was not created correctly.";
+
+        // Check both players have 2000 pounds
+        assert(2000 == player1.getBalance()) : "Error: Player1 does not start with 2000.";
+        assert(2000 == player2.getBalance()) : "Error: Player2 does not start with 2000.";
+
+        // Check both players in position 0
+        assert(0 == player1.getPosition().getPosition()) : "Error: player1 does not start at index 0 squares.";
+        assert(0 == player2.getPosition().getPosition()) : "Error: player2 does not start at index 0 squares.";
+
+        assert(this.players.contains(player1)) : "Error: player1 is not in the players list.";
+        assert(this.players.contains(player2)) : "Error: player2 is not in the players list.";
+
     }
 
     public String getCurrentPlayerName() {
@@ -428,9 +453,22 @@ public class Model extends Observable {
     }
 
     public boolean upgradeHotel(String playerName, String squareName) {
+        /** @pre. Playername is valid, squarename is valid.
+         * @post. If the player was able to upgrade the hotel
+         * star rating increased by 1, player balance decreased by upgrade fee.
+         * If player wasn't able to upgrade the hotel then their balance remains the same
+         * and the hotel rating remains the same.
+         */
+
+        assert(this.getPlayerFromName(playerName) != null) : "Error: player could not be found";
+        assert(board.getSquareFromName(squareName) != null) : "Error: square could not be found";
+
         Player player = getPlayerFromName(playerName);
         Square location = board.getSquareFromName(squareName);
         Hotel hotel = location.getHotel();
+        int beforeRating = hotel.getStarRating();
+        int beforeBalance = player.getBalance();
+        boolean upgradeSuccess = false;
         // Check player is owner of hotel
         if (hotel.getOwner() == player) {
             // Check owner has enough money
@@ -439,7 +477,8 @@ public class Model extends Observable {
                     player.chargeMoney(hotel.getUpgradeFee());
                     setChanged();
                     notifyObservers(playerName+" has upgraded "+location.getName()+" which is now "+location.getHotelRating()+" stars.");
-                    return true;
+                    upgradeSuccess = true;
+                    //return true;
                 }
                 else {
                     setChanged();
@@ -454,7 +493,17 @@ public class Model extends Observable {
             setChanged();
             notifyObservers("Can't upgrade because you don't own the hotel");
         }
-        return false;
+        // Check rating gone up
+        assert(hotel.getStarRating() == (beforeRating+1) || !upgradeSuccess) : "Error: After upgrade rating has not increased by 1.";
+        // Check balance gone down
+        assert(player.getBalance() == (beforeBalance - hotel.getUpgradeFee()) || !upgradeSuccess) : "Error: Player balance has not deducted upgrade fee amount correctly.";
+
+        // Check balance is the same and rating the same since upgrade has failed
+        assert(hotel.getStarRating() == beforeRating || upgradeSuccess) : "Error: Star rating should be the same as before attempted upgrade.";
+        assert(player.getBalance() == beforeBalance || upgradeSuccess) : "Error: Balance should be the same as before attempted upgrade";
+
+//        assert()
+        return upgradeSuccess;
     }
 
     public ArrayList<String> getHotelsOwnedByPlayer(String playerName) {
