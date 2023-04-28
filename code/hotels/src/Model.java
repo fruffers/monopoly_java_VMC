@@ -126,7 +126,7 @@ public class Model extends Observable {
     }
 
 
-    public void initialisePlayers() {
+    private void initialisePlayers() {
         /** @pre. this.players is null
          * @post. 2 players created, both have £2000, both start at position 0 and both players are
          * in the players list.
@@ -267,14 +267,6 @@ public class Model extends Observable {
         return new ImageIcon(this.getPlayerImageIcon(playerName).getImage().getScaledInstance(32,32,Image.SCALE_DEFAULT));
 
     }
-
-//    public boolean addNewPlayer(String name) {
-//        if (players.size() < MAXPLAYERS ) {
-//            players.add(new Player(name));
-//            return true;
-//        }
-//        return false;
-//    }
 
     public void switchPlayer() {
         // Increase index, and mod by players length to avoid index out of range
@@ -434,11 +426,6 @@ public class Model extends Observable {
             // Charge rent
             payer.giveMoneyToPlayer(rent,payee);
             this.justPayed = true;
-            ////////////// TODO: end game if payee is bankrupt
-//            if (payer.isBankrupt()) {
-//                this.isGameOver()
-//            }
-            //canPay = false;
             canRollPass = true;
             setChanged();
             notifyObservers(payerName+" has paid £"+rent+" rent to "+payee.getName());

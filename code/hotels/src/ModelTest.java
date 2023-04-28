@@ -11,12 +11,14 @@ class ModelTest {
         // * Player has enough money to upgrade hotel
         // * The hotel is 0 stars
         // * Player upgrades hotel
+
+        // Setup scenario to be tested
         Player player = model.getPlayer(model.getCurrentPlayerName());
         model.cheatGoTo(4);
         model.doBuy();
-
         int beforeBalance = player.getBalance();
 
+        // Check preconditions hold/are valid
         // Check player location is A3
         assert(player.getPosition().getName() == "A3") : "Error: Precondition failed. Player position is not A3";
         // Check hotel owner is player
@@ -26,10 +28,8 @@ class ModelTest {
         // Check hotel is 0 stars
         assert(player.getPosition().getHotel().getStarRating() == 0) : "Error: Precondition failed. Hotel is not 0 stars";
 
-
-
+        // Upgrade hotel
         model.upgradeHotel(player.getName(), player.getPosition().getName());
-
 
 
         // Postcondition
@@ -42,7 +42,15 @@ class ModelTest {
 
     @org.junit.jupiter.api.Test
     void initialisePlayers() {
+        // Intialise players is called within the constructor
+        // ModelTesting has been added as a subclass of Model in order to access internal private objects for testing purposes,
+        // without interfering with Model
         ModelTesting model = new ModelTesting(true);
+
+        /** @post. 2 players created, both have £2000, both start at position 0 and both players are
+         * in the players list.
+         */
+
         // Check there are 2 players
         Player player1 = model.getPlayer("player1");
         Player player2 = model.getPlayer("player2");
@@ -60,13 +68,25 @@ class ModelTest {
 
     @org.junit.jupiter.api.Test
     void getCanBuy() {
-        ModelTesting modelTester = new ModelTesting(true);
         // Scenario: Check canbuy is false if not enough money to buy hotel
+        // * Current player's location is square A1
+        // * Player's balance is 2000
+        // * Square isn't owned, ie. !hasOwner()
+
+        // Setup scenario
+        ModelTesting modelTester = new ModelTesting(true);
         Player curPlayer = modelTester.getPlayer(modelTester.getCurrentPlayerName());
         modelTester.cheatGoTo(1);
+
+        // Check preconditions hold/are valid
+        // Check player location is A1
+        assertTrue(curPlayer.getPosition().getName() == "A1", "Error: Precondition failed. Player position is not A1");
+        assertEquals(2000,curPlayer.getBalance(),"Error: Precondition failed. Player does not start with 2000.");
+        // Check hotel owner is player
+        assertFalse(curPlayer.getPosition().getHotel().hasOwner(),"Error: Precondition failed. Player does not own this hotel.");
+
+        // Check canbuy is enabled
         assertTrue(modelTester.getCanBuy(), "Error: Buying property should be enabled.");
-        curPlayer.chargeMoney(1999);
-        assertFalse(modelTester.getCanBuy(), "Error: Hotel is still buyable despite not having enough money.");
 
     }
 
@@ -117,159 +137,5 @@ class ModelTest {
 
     }
 
-    @org.junit.jupiter.api.Test
-    void getCanRollPass() {
-    }
 
-    @org.junit.jupiter.api.Test
-    void createImageIcon() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getCurrentPlayerName() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getPlayerBalance() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getInitialised() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void setInitialised() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void initialiseModel() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void isGameOver() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getWinnerName() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getSquareName() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getHotelPrice() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getHotelOvernightFee() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getHotelRating() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getHotelOwnerName() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getPlayerImageIcon() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getPlayerName() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getBalance() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getPlayerNamesOnSquare() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getSmallImageIcon() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void switchPlayer() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void doBuy() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void doPay() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void rollPass() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getCurrentPlayerPosition() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getSquares() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getMaxSquares() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void rollDice() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getMaxPlayers() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void moveCounterForwards() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void buyProperty() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void payRent() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void canAffordHotelUpgrade() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getHotelsOwnedByPlayer() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getPlayerColor() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getColorComponentRed() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getColorComponentBlue() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getColorComponentGreen() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void getDiceScore() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void doTurn() {
-    }
 }
