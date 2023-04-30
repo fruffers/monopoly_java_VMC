@@ -229,15 +229,28 @@ public class Model extends Observable {
     }
 
     public ImageIcon getPlayerImageIcon(String playerName) {
+        /** @pre. playerName exists in players
+         *
+         */
+        assert(players.get(0).getName().equals(playerName) || players.get(1).getName().equals(playerName)) : "Error: precondition failed. No player with that name.";
+
         Player player = this.getPlayerFromName(playerName);
         return player.getImageIcon();
     }
 
     public String getPlayerName(int playerIndex) {
+        /** @pre. playerIndex < player.size()
+         *
+         */
+        assert(playerIndex < players.size()) : "Error: precondition failed. Invalid player index.";
         return players.get(playerIndex).getName();
     }
 
     public int getBalance(int playerIndex) {
+        /** @pre. playerIndex < player.size()
+         * @post. returns playerBalance of players(playerIndex)
+         */
+        assert(playerIndex < players.size()) : "Error: precondition failed. Invalid player index.";
         return players.get(playerIndex).getBalance();
     }
 
