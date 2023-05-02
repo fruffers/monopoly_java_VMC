@@ -51,6 +51,7 @@ public class View implements Observer {
     }
 
     private void updateButtons() {
+        // Enable or disable buttons to match the model using variables in the Model (getCanPay() etc. returns a boolean)
         boardPanel.getComponent(2).setEnabled(model.getCanRollPass());
         boardPanel.getComponent(3).setEnabled(model.getCanBuy());
         boardPanel.getComponent(4).setEnabled(model.getCanPay());
@@ -199,19 +200,20 @@ public class View implements Observer {
         player2Panel.add(iconLabel2);
     }
 
-    private void createButtons() {
+    private void createButtonsAndLabels() {
+        // Add label to display who's turn it is
         JLabel playerTurnLabel = new JLabel("Player 1 turn",SwingConstants.CENTER);
         playerTurnLabel.setBounds(squareSize*3/2,squareSize,squareSize*7/2,squareSize);
         playerTurnLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         boardPanel.add(playerTurnLabel);
 
-
+        // Add label to show messages from the model being updated
         JLabel userMessageLabel = new JLabel("You rolled 5",SwingConstants.CENTER);
         userMessageLabel.setBounds(squareSize*3/2,squareSize*5/3,squareSize*7/2,squareSize);
         userMessageLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         boardPanel.add(userMessageLabel);
 
-
+        // Option buttons
         JButton rollDiceButton = new JButton("Roll/pass");
         rollDiceButton.setBounds(squareSize*3/2,squareSize*9/2+padding,squareSize,squareSize/2);
         rollDiceButton.setFont(new Font(Font.SERIF,Font.BOLD,20));
@@ -238,16 +240,19 @@ public class View implements Observer {
     }
 
     private void createSquares() {
-        // Property counter
-        int p = 0;
+        // Define smaller square size
         int propertyWidth = squareSize / 2;
+
+        ////////////// All positions on board are calculated on basis of square size
+        // Padding is a spacing used at the top and left hand side of board
         // GO square
-//        Square se = new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+squareSize+propertiesPerSide*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
         JPanel panelse = new JPanel();
         panelse.setLayout(null);
 
         // Set index number, the squares array changes dynamically so it increases
+        // Setname sets index to be used when handling cheatmode requests
         panelse.setName(Integer.toString(this.squares.size()));
+        // Configure for controller to handle mouseclicks on this panel/square
         panelse.addMouseListener((MouseListener) this.controller);
 
         // propertywidth is half of squareSize (it's the smaller squares)
@@ -273,7 +278,6 @@ public class View implements Observer {
 
         // This is the bottom row
         for (int i = propertiesPerSide-1; i >= 0; i--) {
-//            Square prop = new Square(this.boardPanel,names[p],prices[p++],new int[]{propertyWidth,squareSize},padding+squareSize+i*propertyWidth,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
             JPanel newpanel = new JPanel();
 
             // Set index number, the squares array changes dynamically so it increases
@@ -289,7 +293,6 @@ public class View implements Observer {
             // Price label
             priceLabel = new JLabel("",SwingConstants.CENTER);
             priceLabel.setBounds(0,(squareSize*2)/3,propertyWidth,squareSize/3);
-//            priceLabel.setBounds(0,(propertyWidth*2)/3,propertyWidth,propertyWidth/3);
             newpanel.add(priceLabel);
             // Name label
             nameLabel = new JLabel("",SwingConstants.CENTER);
@@ -312,7 +315,7 @@ public class View implements Observer {
             starLabel.setVisible(false);
 
         }
-        JPanel panelsw = new JPanel();//this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+squareSize+propertiesPerSide*propertyWidth,Color.WHITE);
+        JPanel panelsw = new JPanel();
         panelsw.setLayout(null);
 
         // Set index number, the squares array changes dynamically so it increases
@@ -372,7 +375,7 @@ public class View implements Observer {
             newpanel.add(starLabel);
             starLabel.setVisible(false);
         }
-        JPanel panelnw = new JPanel();//new Square(this.boardPanel,names[p],prices[p++], new int[]{squareSize, squareSize},padding+0,padding+0,Color.WHITE);
+        JPanel panelnw = new JPanel();
         panelnw.setLayout(null);
 
         // Set index number, the squares array changes dynamically so it increases
@@ -539,7 +542,7 @@ public class View implements Observer {
 
         this.starIcon = new ImageIcon(createImageIcon("resources/star1.png","Star rating").getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT));
 
-        createButtons();
+        createButtonsAndLabels();
         createSquares();
         createPlayerInfoPanels();
         updateTurn();
@@ -573,7 +576,11 @@ public class View implements Observer {
         ((JLabel)boardPanel.getComponent(1)).setText(message);
     }
 
-
+    /**
+     * Implemented method from Observer interface updates GUI to reflect state of model
+     * @param observable : this is the Model
+     * @param o : this is a string of what change has happened
+     */
     @Override
     public void update(Observable observable, Object o) {
         if (model.isGameOver()) {
@@ -583,15 +590,17 @@ public class View implements Observer {
                 this.frame.dispose();
                 createGUI();
             }
-            // Object o could be instruction to player what should happen
+            // Object o is instruction to player what has happened
             String message = (String) o;
-            System.out.println(message);
             updateMessageLabel(message);
+            // Update every square getting new information from Model
             for (int i = 0; i < this.squares.size(); i++) {
                 updateSquare(i);
             }
+            // Update player info panels each time there is a change
             updatePlayerInfoPanel(0);
             updatePlayerInfoPanel(1);
+            //
             this.updateTurn();
             this.updateButtons();
         }
