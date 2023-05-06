@@ -31,7 +31,7 @@ public class View implements Observer {
     public View(Model model, Controller controller) throws InterruptedException, InvocationTargetException {
         this.model = model;
         this.controller = controller;
-        // Model observes View
+        // View observes Model
         model.addObserver(this);
         this.squares = new ArrayList<JPanel>();
 
