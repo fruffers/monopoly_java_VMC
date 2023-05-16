@@ -133,6 +133,7 @@ public class Model extends Observable {
         ImageIcon icon2 = createImageIcon("resources/car2.png","player2");
         Player player2 = new Player("player2",Color.cyan,icon2);
         player2.setPosition(this.board.getSquareFromIndex(0));
+
         this.players.add(player1);
         this.players.add(player2);
         this.currentPlayer = 0;
@@ -532,6 +533,10 @@ public class Model extends Observable {
         else if (owner != null) {
             this.canRollPass = false;
         }
+
+        ///////////////////////////////////////////
+        // empty square
+        this.canRollPass = true;
 
     }
 

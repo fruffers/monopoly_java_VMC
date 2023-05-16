@@ -39,6 +39,7 @@ public class View implements Observer {
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
+                // Create GUI when game starts
                 createGUI();
                 // Update all the squares so that they initially will show all their labels and icons
                 for (int i = 0; i < 40; i++) {
@@ -208,7 +209,7 @@ public class View implements Observer {
         boardPanel.add(playerTurnLabel);
 
         // Add label to show messages from the model being updated
-        JLabel userMessageLabel = new JLabel("You rolled 5",SwingConstants.CENTER);
+        JLabel userMessageLabel = new JLabel("Game started",SwingConstants.CENTER);
         userMessageLabel.setBounds(squareSize*3/2,squareSize*5/3,squareSize*7/2,squareSize);
         userMessageLabel.setFont(new Font(Font.SERIF,Font.BOLD,20));
         boardPanel.add(userMessageLabel);
@@ -621,7 +622,7 @@ public class View implements Observer {
         winLabel.setBounds(0,0,outerPanel.getWidth(),outerPanel.getHeight());
         // New game button
         JButton newgameButton = new JButton("New game");
-        newgameButton.setBounds(this.outerPanel.getWidth()/2,(this.outerPanel.getHeight()/2)-newgameButton.getWidth(),this.outerPanel.getWidth()/8,this.outerPanel.getHeight()/8);
+        newgameButton.setBounds(this.outerPanel.getWidth()/2,(this.outerPanel.getHeight()/3*2)-newgameButton.getWidth(),this.outerPanel.getWidth()/8,this.outerPanel.getHeight()/8);
         newgameButton.setFont(new Font(Font.SERIF, Font.BOLD, 20));
         newgameButton.setActionCommand("newgame");
         newgameButton.addActionListener(this.controller);
