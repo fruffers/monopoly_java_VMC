@@ -593,7 +593,7 @@ public class View implements Observer {
             }
             // Object o is instruction to player what has happened
             String message = (String) o;
-            updateMessageLabel(message);
+            updateMessageLabel("<html>" + message + "</html>");
             // Update every square getting new information from Model
             for (int i = 0; i < this.squares.size(); i++) {
                 updateSquare(i);
