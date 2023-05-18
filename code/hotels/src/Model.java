@@ -536,7 +536,7 @@ public class Model extends Observable {
 
         ///////////////////////////////////////////
         // empty square
-        this.canRollPass = true;
+//        this.canRollPass = true;
 
     }
 
